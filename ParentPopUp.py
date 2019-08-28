@@ -11,23 +11,22 @@ class ParentPopUp:
 	def __init__(self, master, name):
 
 		self.master = master                  # Root of this page
-		self.name = name                      # Title of page
-
 		rowcount = 0                          # row index for grid of main frame
 
 		frame = ttk.Frame(master, style="M.TFrame")
 		frame.pack(fill='both', expand=True)
 
-		ttk.Label(frame, text = self.name, style="N.TLabel").grid(row=rowcount, columnspan=2, sticky='w')
+		ttk.Label(frame, text = name, style="N.TLabel").grid(row=rowcount, columnspan=2, sticky='w')
 		rowcount += 1
-		
-		self.readCategorFrame = ttk.Frame(frame, style="P.TFrame", padding=(10, 10, 10, 10))
-		self.readCategorFrame.grid(row=rowcount, columnspan=2, pady=10)
+
+		# read categories +  types +  library numbers in this next frame 
+		self.readProperties = ttk.Frame(frame, style="P.TFrame", padding=(10, 10, 10, 10))
+		self.readProperties.grid(row=rowcount, columnspan=2, pady=10)
 		rowcount += 1
 
         #--------
 
-		ttk.Label(frame, text="Files for assembly:", style="C.TLabel").grid(row=rowcount, column=0, sticky='w')
+		ttk.Label(frame, text="Files with the reads:", style="C.TLabel").grid(row=rowcount, column=0, sticky='w')
 		self.buttonUlaz = ttk.Button(frame, text='Choose the input files', command=self.openFileName)
 		self.buttonUlaz.grid(row=rowcount, column=1, sticky='w', padx=20)
 		rowcount += 1
@@ -44,8 +43,8 @@ class ParentPopUp:
 
 		ttk.Label(frame, text='Parameters:', style="C.TLabel").grid(row=rowcount, column=0, sticky='w')
 
-		self.buttonParams = ttk.Button(frame, text='More parameters', command=self.chooseParams, style = "P.TButton")
-		self.buttonParams.grid(row=rowcount, column = 1, sticky='w')
+		self.buttonParams = ttk.Button(frame, text='More parameters', command=self.chooseParams)
+		self.buttonParams.grid(row=rowcount, column = 1, sticky='w', padx = 20, pady = 5)
 		rowcount += 1
 
 		self.paramFrame = ttk.Frame(frame, style="P.TFrame", padding=(10, 10, 10, 10))
@@ -53,19 +52,15 @@ class ParentPopUp:
 		rowcount += 1
         
         #--------- paramFrame
-		paramFrameRowcount = 0
-		ttk.Label(self.paramFrame, text='K-mer length:', style="P.TLabel").grid(row=paramFrameRowcount, column=0, sticky='e')
-		self.kMerEntry = ttk.Entry(self.paramFrame)
-		self.kMerEntry.grid(row=paramFrameRowcount, column=1, sticky='w')
-		self.kMerEntry.insert(0, str(""))
-		paramFrameRowcount +=1
+		self.paramFrameRowcount = 0
+
         
 		self.addicionalParamsLabel = {}
 		self.addicionalParamsEntry = {}
         
         #---------
         
-		self.buttonStart = ttk.Button(frame, text='Run the assembly!', command=self.runScript)
+		self.buttonStart = ttk.Button(frame, text='Run ' + name + '!', command=self.runScript)
 		self.buttonStart.grid(row=rowcount, columnspan=2, sticky='s', pady=20)
 		rowcount += 1
 
@@ -79,26 +74,18 @@ class ParentPopUp:
 
 	def runScript(self):
 		print('Validating the parameters...')
-		try:
-			tmpKmer = int(self.kMerEntry.get())
-			
-			if (tmpKmer%2)==0 or tmpKmer>128:
-				messagebox.showwarning("Problem with the parameters", "K-mer entry must be odd and less then 128!")
-			elif len(self.inputFiles)==0:
-				messagebox.showwarning("Problem with the input files", "No input file is choosen")
-			else:
-				print('Running of the assembly...')
-				self.statusLabel["text"] = "Wait..."
+		if len(self.inputFiles)==0:
+			messagebox.showwarning("Problem with the input files", "No input file is choosen")
+		else:
+			print('Running of the assembly...')
+			self.statusLabel["text"] = "Wait..."
                 
-				tmpDic = self.determineCommonDict()
+			tmpDic = self.determineCommonDict()
                
-				parameters = [self.whereProgram()]
+			parameters = [self.whereProgram()]
                 
-				self.statusLabel["text"] = "Finished!"
+			self.statusLabel["text"] = "Finished!"
     
-		except ValueError:
-			messagebox.showwarning("Problem with the parameters", "K-mer entry was no valid number or another, serious problem!")
-
             
 	def openFileName(self):
 		filename = askopenfilename(filetypes =(("Fasta, fastq, sra, sam ..", ("*.fa", "*.fasta", "*.fq", "*.fastq", "*.sam", "*.bam")),("All Files","*.*")),
@@ -159,3 +146,9 @@ class ParentPopUp:
 		         
 	def outputDirectory(self):
 		return "Output directory"
+
+
+	def addParameter(self, oznaka, tip, opcije):
+		# using: self.paramFrame & self.paramFrameRowcount
+		if(tip == 1): #parameter is a flag
+			
