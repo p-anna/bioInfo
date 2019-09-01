@@ -1,4 +1,4 @@
-#import ParamParent as pp
+import AddicionalParamParent as adpp
 from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
@@ -10,13 +10,12 @@ import re
 class ParentPopUp:
 	def __init__(self, master, name):
 
-
-		self.kulcsok = ["-a", "-b", "-c", "-d", "-e"]
-		self.letezoKulcsok = ["-b", "-e"]
-
-		self.master = master                  # Root of this page
+		self.master = master                  # root of this page
 		rowcount = 0                          # row index for grid of main frame
 		self.fixParamCount = 0                # number of required parameters
+		self.possibleParameters = adpp.ChosenParams() # class with parameters
+		self.paramFrameRowcount = 0 
+
 
 		frame = ttk.Frame(master, style="M.TFrame")
 		frame.pack(fill='both', expand=True)
@@ -57,9 +56,7 @@ class ParentPopUp:
 		rowcount += 1
         
         #--------- paramFrame
-		self.paramFrameRowcount = 0
-		
-        
+		    
 		self.parameterLabels = {}
 		self.parameterValues = {}
 		self.parameterContainers = {}
@@ -113,6 +110,8 @@ class ParentPopUp:
 	#################################### implement in specific classes ##############
 	def chooseParams(self):
 		print("Choose parameters function running")
+		root = Toplevel(self.master)
+		ParamWindow = adpp.AddicionalParamParent(root, self.possibleParameters, self)
 	##################################################################################
     
 	def buttonText(self, filename):
@@ -155,73 +154,75 @@ class ParentPopUp:
 
 		self.destroyPreviousParameters()
 		
-		for k in self.kulcsok:
-			if True: #if checkbutton checked
-				self.addParameter("-k", 2, [])
+		for tag in self.possibleParameters.tags:
+			if self.possibleParameters.params[tag].get() == 1: #if checkbutton checked
+				self.addParameter(tag)
 
-	def destroyPreviousParameters(self):
 	# destroy labels containers and values for previous parameters
-		for k in self.letezoKulcsok:
-			try:
-				self.parameterLabels[k].destroy()
-				self.parameterValues[k].destroy()
-				for pCont in self.parameterContainers[k]:
-					pCont.destroy()
-				del self.parameterLabels[k]
-				del self.parameterValues[k]
-				for pCont in self.parameterContainers[k]:	
-					del pCont
-			except:
-				messagebox.showwarning("Error", "Unexpected error showAddicionalParams")
+	def destroyPreviousParameters(self):
+		for tag in self.possibleParameters.tags:
+			if tag in self.parameterLabels:
+				try:
+					self.parameterLabels[tag].destroy()
+					for pCont in self.parameterContainers[tag]:
+						pCont.destroy()
+					del self.parameterLabels[tag]
+					del self.parameterValues[tag]
+					for pCont in self.parameterContainers[tag]:	
+						del pCont
+				except:
+					messagebox.showwarning("Error", "Unexpected error in 08destroyPreviousParameters")
 
 
-	def addParameter(self, tag, typeOfParam, options):
+	def addParameter(self, tag):
+		typeOfParam = self.possibleParameters.paramDesc[tag][1]
+		
 		# using: self.paramFrame & self.paramFrameRowcount
 		self.parameterLabels[tag] = ttk.Label(self.paramFrame, text = tag, style="P.TLabel")
 		self.parameterLabels[tag].grid(row=self.paramFrameRowcount, column=0, sticky='e')
 
-		self.parameterContainers[tag][0] = ttk.Frame(self.paramFrame, style="P.TFrame")
+		self.parameterContainers[tag] = []
+		self.parameterContainers[tag].append(ttk.Frame(self.paramFrame, style="P.TFrame"))
 		self.parameterContainers[tag][0].grid(row=self.paramFrameRowcount, column=1, sticky='e')
 
 		#parameter is a flag
 		if(typeOfParam == 1):
 			self.parameterValues[tag] = IntVar()
-			self.parameterContainers[tag][1] = ttk.Checkbutton(self.parameterContainers[tag][0], style="1.TRadiobutton", text="", variable = self.parameterValues[tag])
+			self.parameterContainers[tag].append(ttk.Checkbutton(self.parameterContainers[tag][0], style="1.TRadiobutton", text="", variable = self.parameterValues[tag]))
 			self.parameterContainers[tag][1].grid(row=0, column=0)
 
 		#int, int list, float, string
 		elif(typeOfParam == 2 or typeOfParam == 3 or typeOfParam == 5 or typeOfParam == 7):
 			self.parameterValues[tag] = StringVar()
-			self.parameterContainers[tag][1] = ttk.Entry(self.parameterContainers[tag][0], textvariable = self.parameterValues[tag])
+			self.parameterContainers[tag].append(ttk.Entry(self.parameterContainers[tag][0], textvariable = self.parameterValues[tag]))
 			self.parameterContainers[tag][1].grid(row=0, column=0)
 
 		#file
 		elif typeOfParam == 4:
 			self.parameterValues[tag] = StringVar()
 
-			self.parameterContainers[tag][2] = ttk.Entry(self.parameterContainers[tag][0], textvariable=self.parameterValues[tag], state="disabled")
-			self.parameterContainers[tag][1] = ttk.Button(self.parameterContainers[tag][0], text='Choose the file', command = lambda : self.openFileParam(self.parameterValues[tag]))
-			self.parameterContainers[tag][1].grid(row=0, column=0) #button for opening
-			self.parameterContainers[tag][2].grid(row=0, column=1) #entry with name of file
+			self.parameterContainers[tag].append(ttk.Entry(self.parameterContainers[tag][0], textvariable=self.parameterValues[tag], state="disabled"))
+			self.parameterContainers[tag].append(ttk.Button(self.parameterContainers[tag][0], text='Choose the file', command = lambda : self.openFileParam(self.parameterValues[tag])))
+			self.parameterContainers[tag][2].grid(row=0, column=0) #button for opening
+			self.parameterContainers[tag][1].grid(row=0, column=1) #entry with name of file
 
 		#
 		elif typeOfParam == 6:
 			self.parameterValues[tag] = StringVar()
 
 			indexContainer = 1 #from 1, 0 is the frame
-			for option in options:
-				self.parameterContainers[tag][indexContainer] = ttk.Radiobutton(self.parameterContainers[tag][0], style="1.TRadiobutton", text=option, variable = self.parameterValues[tag])
+			for option in self.possibleParameters.paramDesc[tag][2]:
+				self.parameterContainers[tag].append(ttk.Radiobutton(self.parameterContainers[tag][0], style="1.TRadiobutton", text=option, variable = self.parameterValues[tag]))
 				self.parameterContainers[tag][indexContainer].grid(row=0, column=indexContainer-1)
 				indexContainer += 1
 		else:
 			messagebox.showwarning("Error", "Error with the type of option in function addParameter ")
 				
-		self.paramFrameRowCount += 1
+		self.paramFrameRowcount += 1
 
 
 	def openFileParam(self, buttonFileName):
-		filename = askopenfilename(filetypes =(("All Files","*.*")),
-                                   title = "Choose a file.")
+		filename = askopenfilename(title = "Choose a file.")
 		if str(filename) != "()" and str(filename) != "":
 			buttonFileName.set(filename)
         
