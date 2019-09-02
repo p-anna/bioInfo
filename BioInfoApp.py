@@ -1,8 +1,7 @@
 import style
-from PossibleParams import PossibleParamsExample
-from SpadesPopUp import SpadesPopUp
-from AbyssPopUp import AbyssPopUp
-from VelvetPopUp import VelvetPopUp
+from SpadesPopUp import *
+from AbyssPopUp import *
+from VelvetPopUp import *
 from tkinter import *
 from tkinter import ttk
 
@@ -12,9 +11,9 @@ class BioInfoApp():
 		####  Map of assemblies and their classes ###################
 
 		assemblyClassMaker = {}
-		assemblyClassMaker["Spades"] = lambda root : SpadesPopUp(root, "Spades", lambda : PossibleParamsExample())
-		assemblyClassMaker["ABySS"] = lambda root : AbyssPopUp(root, "ABySS", lambda : PossibleParamsExample())
-		assemblyClassMaker["Velvet"] = lambda root : VelvetPopUp(root, "Velvet", lambda : PossibleParamsExample())
+		assemblyClassMaker["Spades"] = lambda root : SpadesPopUp(root, "Spades", lambda : PossibleParamsSpades())
+		assemblyClassMaker["ABySS"] = lambda root : AbyssPopUp(root, "ABySS", lambda : PossibleParamsAbyss())
+		assemblyClassMaker["Velvet"] = lambda root : VelvetPopUp(root, "Velvet", lambda : PossibleParamsVelvet())
 
 	
 		#############################################################

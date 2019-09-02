@@ -1,4 +1,4 @@
-import AddicionalParamParent as adpp
+from AddicionalParamParent import AddicionalParamParent
 from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
@@ -111,7 +111,7 @@ class ParentPopUp:
 	def chooseParams(self):
 		print("Choose parameters function running")
 		root = Toplevel(self.master)
-		ParamWindow = adpp.AddicionalParamParent(root, self.possibleParameters, self)
+		ParamWindow = AddicionalParamParent(root, self.possibleParameters, self)
 	##################################################################################
     
 	def buttonText(self, filename):
