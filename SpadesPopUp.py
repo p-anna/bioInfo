@@ -29,7 +29,7 @@ class SpadesPopUp(ParentPopUp):
 		for rc in self.readCategList:
 			# value of the radioButton is the index in self.readCategList
 			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rc[0], variable=self.readCateg, value=indexReadCateg)
-			rb.grid(row=int(indexReadCateg / 3), column=(indexReadCateg % 3), sticky='w')
+			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
 
 			#should the "read type" and "library number" group be enabled for this read category?
 			#isReadTypeNeeded, isLibraryNumberNeeded
@@ -48,8 +48,8 @@ class SpadesPopUp(ParentPopUp):
 		self.readCateg.set(1)
 
 		indexReadCateg += 1
-		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 3), columnspan=3, sticky='we')
-		indexReadCateg +=3
+		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='we')
+		indexReadCateg +=2
 		#READ TYPE LIST
 		#("read type name", "terminalTag)
 		self.readTypeList = [('forward reads', "-1"),
@@ -69,7 +69,7 @@ class SpadesPopUp(ParentPopUp):
 		for rt in self.readTypeList:
 			# value of the radioButton is the index in self.readTypeList
 			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rt[0], variable=self.readTypeVar, value=indexReadType)
-			rb.grid(row=int(indexReadCateg / 3), column=(indexReadCateg % 3), sticky='w')
+			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
 			self.readTypeRadioButtons.append(rb)
 			indexReadCateg += 1
 			indexReadType += 1
@@ -77,11 +77,11 @@ class SpadesPopUp(ParentPopUp):
 		self.readTypeVar.set(0)
 
 		indexReadCateg += 1
-		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 3), columnspan=3, sticky='we')
-		indexReadCateg +=3
+		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='we')
+		indexReadCateg += 1
 
 		#LIBRARY NUMBER
-		self.libraryNumberChoices = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+		self.libraryNumberChoices = ['1', '2', '3', '4', '5', '6', '7', '8']
 
 		self.libraryNumberVar = StringVar()
 
@@ -91,7 +91,7 @@ class SpadesPopUp(ParentPopUp):
 		for lnc in self.libraryNumberChoices:
 			# value of the radioButton is the index in self.libraryNumberChoices
 			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=lnc[0], variable=self.libraryNumberVar, value=indexLibraryNum)
-			rb.grid(row=int(indexReadCateg / 3), column=(indexReadCateg % 3), sticky='w')
+			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
 			self.libraryNumRadioButtons.append(rb)
 			indexReadCateg += 1
 			indexLibraryNum += 1
