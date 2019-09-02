@@ -1,9 +1,110 @@
 from ParentPopUp import ParentPopUp
 from AddicionalParamParent import PossibleParamsParent
+from tkinter import *
 
 class VelvetPopUp(ParentPopUp):
 	def __init__(self, master, name, possibleParamClassInit):
-		super().__init__(master, name, possibleParamClassInit)		
+		super().__init__(master, name, possibleParamClassInit)
+		
+		#Frame: self.readProperties ----------------------------------------------------------
+				# READ CATEGORY LIST
+		#("read categ name", "terminalTag", isLibraryNumberNeeded)
+		self.readCategList = [('short single-end reads', "-short", True),
+							  ('short paired-end reads', "-shortPaired", True),
+							  ('long single-end reads', "-long", False),
+							  ('long paired-end reads', "-longPaired", False)]
+							  
+		indexReadCateg = 0        #index of read cateogry frame
+		self.readCateg = StringVar()   #variable for radioButtons with read categories
+		
+		# We put two categories in a row in the frame self.readProperties from ParentPopUp
+		for rc in self.readCategList:
+			# value of the radioButton is the index in self.readCategList
+			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rc[0], variable=self.readCateg, value=indexReadCateg)
+			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
+
+			#should the "library number" group be enabled for this read category?
+			#isLibraryNumberNeeded
+			if rc[2]:
+				rb.configure(command=lambda: self.disableEnable(True))
+			else:
+				rb.configure(command=lambda: self.disableEnable(False))
+			
+			indexReadCateg += 1
+			
+		self.readCateg.set(1)
+
+		indexReadCateg += 1
+		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='we')
+		indexReadCateg += 1
+
+		#READ TYPE LIST
+		#("read type name", "terminalTag)
+		self.readTypeList = [('fasta', '-fasta'),
+							 ('fastq', '-fastq'),
+							 ('fasta.gz', '-fasta.gz'),
+							 ('fastq.gz', '-fastq.gz'),
+							 ('sam', '-sam'),
+							 ('bam', '-bam'),
+							 ('eland', '-eland'),
+							 ('gerald', '-gerald')]
+		
+		self.readTypeVar = StringVar()
+
+		indexReadType = 0 #index of read type
+		
+		for rt in self.readTypeList:
+			# value of the radioButton is the index in self.readTypeList
+			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rt[0], variable=self.readTypeVar, value=indexReadType)
+			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
+			indexReadCateg += 1
+			indexReadType += 1
+
+		self.readTypeVar.set(1)
+
+		indexReadCateg += 1
+		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='we')
+		indexReadCateg += 1
+
+		#LIBRARY NUMBER
+		self.libraryNumberChoices = ['1', '2']
+
+		self.libraryNumberVar = StringVar()
+
+		indexLibraryNum = 1 #index of library number
+		self.libraryNumRadioButtons = []
+		
+		for lnc in self.libraryNumberChoices:
+			# value of the radioButton is the index in self.libraryNumberChoices
+			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=lnc[0], variable=self.libraryNumberVar, value=indexLibraryNum)
+			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
+			self.libraryNumRadioButtons.append(rb)
+			indexReadCateg += 1
+			indexLibraryNum += 1
+
+		self.libraryNumberVar.set(1)
+
+		
+
+
+
+
+	def disableEnable(self, isEnabledLibraryNumber):
+		if(isEnabledLibraryNumber):
+			stateText = NORMAL
+		else:
+			stateText = DISABLED
+			
+		for lnrb in self.libraryNumRadioButtons:
+			lnrb.configure(state = stateText)
+
+
+
+
+
+
+
+		
 
 class PossibleParamsVelvet(PossibleParamsParent):
 	def __init__(self):

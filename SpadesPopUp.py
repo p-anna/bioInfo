@@ -50,16 +50,17 @@ class SpadesPopUp(ParentPopUp):
 		indexReadCateg += 1
 		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='we')
 		indexReadCateg +=2
+		
 		#READ TYPE LIST
 		#("read type name", "terminalTag)
 		self.readTypeList = [('forward reads', "-1"),
-						('reverse reads', "-2"),
-						('interlaced reads', "-12"),
-						('merged reads', "-m"),
-						('unpaired reads', "-s"),
-						("forward-reverse orientation", "-fr"),
-						("reverse-forward orientation", "-rf"),
-						("forward-forward orientation", "-ff")]
+							 ('reverse reads', "-2"),
+							 ('interlaced reads', "-12"),
+							 ('merged reads', "-m"),
+							 ('unpaired reads', "-s"),
+							 ("forward-reverse orientation", "-fr"),
+							 ("reverse-forward orientation", "-rf"),
+							 ("forward-forward orientation", "-ff")]
 		
 		self.readTypeVar = StringVar()
 
