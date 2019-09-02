@@ -109,7 +109,6 @@ class ParentPopUp:
 
 	#################################### implement in specific classes ##############
 	def chooseParams(self):
-		print("Choose parameters function running")
 		root = Toplevel(self.master)
 		ParamWindow = AddicionalParamParent(root, self.possibleParameters, self)
 	##################################################################################
@@ -149,7 +148,6 @@ class ParentPopUp:
 		return "Output directory"
 
 	def showAddicionalParams(self):
-		print("Show addicional params function running")
 		paramFrameRowcount = self.fixParamCount #Fix parameters k-mer length
 
 		self.destroyPreviousParameters()
@@ -160,8 +158,10 @@ class ParentPopUp:
 
 	# destroy labels containers and values for previous parameters
 	def destroyPreviousParameters(self):
+		#for every possible tag
 		for tag in self.possibleParameters.tags:
-			if tag in self.parameterLabels:
+			#if "tag" had a label in the window, destroy and delete its label, containers and value
+			if tag in self.parameterLabels:      
 				try:
 					self.parameterLabels[tag].destroy()
 					for pCont in self.parameterContainers[tag]:
@@ -171,7 +171,7 @@ class ParentPopUp:
 					for pCont in self.parameterContainers[tag]:	
 						del pCont
 				except:
-					messagebox.showwarning("Error", "Unexpected error in 08destroyPreviousParameters")
+					messagebox.showwarning("Error", "Unexpected error in destroyPreviousParameters")
 
 
 	def addParameter(self, tag):
@@ -202,11 +202,11 @@ class ParentPopUp:
 			self.parameterValues[tag] = StringVar()
 
 			self.parameterContainers[tag].append(ttk.Entry(self.parameterContainers[tag][0], textvariable=self.parameterValues[tag], state="disabled"))
-			self.parameterContainers[tag].append(ttk.Button(self.parameterContainers[tag][0], text='Choose the file', command = lambda : self.openFileParam(self.parameterValues[tag])))
+			self.parameterContainers[tag].append(ttk.Button(self.parameterContainers[tag][0], style="P.TButton", text='Choose the file', command = lambda : self.openFileParam(self.parameterValues[tag])))
 			self.parameterContainers[tag][2].grid(row=0, column=0) #button for opening
 			self.parameterContainers[tag][1].grid(row=0, column=1) #entry with name of file
 
-		#
+		#options
 		elif typeOfParam == 6:
 			self.parameterValues[tag] = StringVar()
 
@@ -216,13 +216,13 @@ class ParentPopUp:
 				self.parameterContainers[tag][indexContainer].grid(row=0, column=indexContainer-1)
 				indexContainer += 1
 		else:
-			messagebox.showwarning("Error", "Error with the type of option in function addParameter ")
+			messagebox.showwarning("Error", "Unexpected error with the type of option in function addParameter ")
 				
 		self.paramFrameRowcount += 1
 
 
-	def openFileParam(self, buttonFileName):
+	def openFileParam(self, entryFileName):
 		filename = askopenfilename(title = "Choose a file.")
 		if str(filename) != "()" and str(filename) != "":
-			buttonFileName.set(filename)
+			entryFileName.set(self.buttonText(filename))
         

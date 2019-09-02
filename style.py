@@ -11,8 +11,8 @@ def styleTheWindow():
 						  height=0, highlightcolor='#b5c5e5', justify=LEFT, padding=(1, 1, 1, 1), relief='flat')
 	ttk.Style().configure("2I.TButton", background='#3ee8a9', font=("MS Serif", 9, "bold"), foreground='#122956',
 						  height=0, highlightcolor='#b5c5e5', justify=LEFT, padding=(1, 1, 1, 1), relief='flat')
-	ttk.Style().configure("P.TButton", background='#d9f756', font=("MS Serif", 9, "bold"), foreground='#122956',
-						  height=0, highlightcolor='#b5c5e5', justify=LEFT, padding=(4, 4, 4, 4), relief='flat')
+	ttk.Style().configure("P.TButton", background='#b0cdfc', font=("MS Serif", 9, "bold"), foreground='#122956',
+						  height=0, highlightcolor='#d9f756', justify=LEFT, padding=(4, 4, 4, 4), relief='flat')
 	ttk.Style().map("TButton", background=[('hover', "#42f462")])
 	ttk.Style().map("1I.TButton", background=[('hover', "#ef2809")])
 	ttk.Style().map("2I.TButton", background=[('hover', "#ef2809")])
