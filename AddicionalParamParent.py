@@ -27,8 +27,8 @@ class AddicionalParamParent:
 	def returnToPrevWindow(self):
 		self.prevWindow.showAddicionalParams()
 		self.master.destroy()
-        
-class ChosenParams:
+
+class PossibleParamsExample:
 	def __init__(self):
 		self.tags = ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7"]
 #					
@@ -38,9 +38,6 @@ class ChosenParams:
 			self.params[tag] = IntVar(0) # variable for Checkbutton for every parameter
 
 		self.paramDesc = {}
-
-		# self.paramDesc[oznaka] = ("opis", tip, options) tip: flag=1, int=2, intlist=3, file=4,
-		# float=5, options = 6, text=7
 
 		self.paramDesc["flag=1"] = ("", 1)		
 		self.paramDesc["int=2"] = ("", 2)

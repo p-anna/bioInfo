@@ -8,12 +8,12 @@ import re
 
 
 class ParentPopUp:
-	def __init__(self, master, name):
+	def __init__(self, master, name, possibleParamClassInit):
 
 		self.master = master                  # root of this page
 		rowcount = 0                          # row index for grid of main frame
 		self.fixParamCount = 0                # number of required parameters
-		self.possibleParameters = adpp.ChosenParams() # class with parameters
+		self.possibleParameters = possibleParamClassInit() # class with parameters
 		self.paramFrameRowcount = 0 
 
 

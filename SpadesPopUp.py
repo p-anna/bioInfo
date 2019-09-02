@@ -1,7 +1,7 @@
 from ParentPopUp import ParentPopUp
 
 class SpadesPopUp(ParentPopUp):
-	def __init__(self, master, name):
+	def __init__(self, master, name, possibleParamClassInit):
 
 
 
@@ -10,4 +10,4 @@ class SpadesPopUp(ParentPopUp):
 
 
 		
-		super().__init__(master, name)	
+		super().__init__(master, name, possibleParamClassInit)	
