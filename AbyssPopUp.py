@@ -10,8 +10,8 @@ class AbyssPopUp(ParentPopUp):
 
 		# READ CATEGORY LIST
 		#("read categ name", "terminalTag")
-		self.readCategList = [('single-end reads', ),
-							  ('paired-end reads', )]
+		self.readCategList = [('single-end reads', "in="),
+							  ('paired-end reads', "se=")]
 
 		indexReadCateg = 0        #index of read cateogry frame
 		self.readCateg = StringVar()   #variable for radioButtons with read categories
