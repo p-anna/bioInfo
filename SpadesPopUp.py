@@ -99,12 +99,19 @@ class SpadesPopUp(ParentPopUp):
 
 		self.libraryNumberVar.set(1)
 
+		# Fixed parameters ----------------------------------------------
+		# using self.paramFrame and self.fixParamCount
+		# self.parameterLabels, self.parameterValues and self.parameterContainers
+		
+
+
+
+		
 		
 	# Helping functions -------------------------------------------------
 
 	# num == 1 -> group of "read type" RadioButtons
 	# num == 2 -> group of "library number" RadioButtons
-	
 	def disableEnable(self, isEnabledReadType, isEnabledLibraryNumber):
 		if(isEnabledReadType):
 			stateText = NORMAL
@@ -133,32 +140,36 @@ class SpadesPopUp(ParentPopUp):
 		
 class PossibleParamsSpades(PossibleParamsParent):
 	def __init__(self):
-		tags = ["sc", "meta", "rna", "plasmid", "iontorrent", "only-assembler", "careful", "continue", "disable-gzip-outpu", "disable-rr", "dataset", "threads", "memory", "tmp-dir", "cov-cutoff", "phred-offset"]
-					
+		tags = ["k-mer", "sc", "meta", "rna", "plasmid", "iontorrent", "only-assembler", "careful", "continue", "disable-gzip-outpu", "disable-rr", "dataset", "threads", "memory", "tmp-dir", "cov-cutoff", "phred-offset"]
+
+		#("param description", type, isOptionalParam)
+		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7"]
 		self.paramDesc = {}
 
-		# ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7"]
-
+		# FIXED PARAMETERS
+		self.paramDesc["k-mer"] = ("K-mer length", 2, False)
+		
+		# OPTIONAL PARAMETERS
 		#Basic options:
-		self.paramDesc["sc"] = ("this flag is required for MDA (single-cell) data", 1)
-		self.paramDesc["meta"] = ("this flag is required for metagenomic sample data", 1)
-		self.paramDesc["rna"] = ("this flag is required for RNA-Seq data", 1)
-		self.paramDesc["plasmid"] = ("runs plasmidSPAdes pipeline for plasmid detection", 1)
-		self.paramDesc["iontorrent"] = ("this flag is required for IonTorrent data", 1)
+		self.paramDesc["sc"] = ("this flag is required for MDA (single-cell) data", 1, True)
+		self.paramDesc["meta"] = ("this flag is required for metagenomic sample data", 1, True)
+		self.paramDesc["rna"] = ("this flag is required for RNA-Seq data", 1, True)
+		self.paramDesc["plasmid"] = ("runs plasmidSPAdes pipeline for plasmid detection", 1, True)
+		self.paramDesc["iontorrent"] = ("this flag is required for IonTorrent data", 1, True)
 
 		#Pipeline options:
-		self.paramDesc["only-assembler"] = ("runs only assembling (without read error correction)", 1)
-		self.paramDesc["careful"] = ("tries to reduce number of mismatches and short indels", 1)
-		self.paramDesc["continue"] = ("continue run from the last available check-point", 1)
-		self.paramDesc["disable-gzip-outpu"] = ("forces error correction not to compress the corrected reads", 1)
-		self.paramDesc["disable-rr"] = ("disables repeat resolution stage of assembling", 1)
+		self.paramDesc["only-assembler"] = ("runs only assembling (without read error correction)", 1, True)
+		self.paramDesc["careful"] = ("tries to reduce number of mismatches and short indels", 1, True)
+		self.paramDesc["continue"] = ("continue run from the last available check-point", 1, True)
+		self.paramDesc["disable-gzip-outpu"] = ("forces error correction not to compress the corrected reads", 1, True)
+		self.paramDesc["disable-rr"] = ("disables repeat resolution stage of assembling", 1, True)
 
 		#Advanced options:
-		self.paramDesc["dataset"] = ("file with dataset description in YAML format", 4)
-		self.paramDesc["threads"] = ("number of threads [default: 16]", 2)
-		self.paramDesc["memory"] = ("RAM limit for SPAdes in Gb (terminates if exceeded) [default: 250]", 2)
-		self.paramDesc["tmp-dir"] = ("directory for temporary files [default: <output_dir>/tmp", 4)
-		self.paramDesc["cov-cutoff"] = ("coverage cutoff value (a positive float number, or 'auto', or 'off') [default: 'off']", 7)
-		self.paramDesc["phred-offset"] = ("PHRED quality offset in the input reads (33 or 64) [default: auto-detect]", 2)
+		self.paramDesc["dataset"] = ("file with dataset description in YAML format", 4, True)
+		self.paramDesc["threads"] = ("number of threads [default: 16]", 2, True)
+		self.paramDesc["memory"] = ("RAM limit for SPAdes in Gb (terminates if exceeded) [default: 250]", 2, True)
+		self.paramDesc["tmp-dir"] = ("directory for temporary files [default: <output_dir>/tmp", 4, True)
+		self.paramDesc["cov-cutoff"] = ("coverage cutoff value (a positive float number, or 'auto', or 'off') [default: 'off']", 7, True)
+		self.paramDesc["phred-offset"] = ("PHRED quality offset in the input reads (33 or 64) [default: auto-detect]", 2, True)
 
 		super().__init__(tags)

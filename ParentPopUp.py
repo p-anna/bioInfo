@@ -60,6 +60,9 @@ class ParentPopUp:
 		self.parameterLabels = {}
 		self.parameterValues = {}
 		self.parameterContainers = {}
+
+		self.showFixedParams()
+		
 		#---------
         
 		self.buttonStart = ttk.Button(frame, text='Run ' + name + '!', command=self.runScript)
@@ -147,31 +150,39 @@ class ParentPopUp:
 	def outputDirectory(self):
 		return "Output directory"
 
+	def showFixedParams(self):
+		for tag in self.possibleParameters.tags:
+			if not(self.possibleParameters.paramDesc[tag][2]): #if it is fixed parameter
+				self.addParameter(tag)
+				self.fixParamCount += 1
+
 	def showAddicionalParams(self):
-		paramFrameRowcount = self.fixParamCount #Fix parameters k-mer length
+		self.paramFrameRowcount = self.fixParamCount #number of fix parameters
 
 		self.destroyPreviousParameters()
 		
 		for tag in self.possibleParameters.tags:
-			if self.possibleParameters.params[tag].get() == 1: #if checkbutton checked
-				self.addParameter(tag)
+			if self.possibleParameters.paramDesc[tag][2]: #if it is optional parameter
+				if self.possibleParameters.params[tag].get() == 1: #if checkbutton checked
+					self.addParameter(tag)
 
 	# destroy labels containers and values for previous parameters
 	def destroyPreviousParameters(self):
-		#for every possible tag
+		#for every possible tag of an optional parameter
 		for tag in self.possibleParameters.tags:
+			if self.possibleParameters.paramDesc[tag][2]: #if it is optional parameter
 			#if "tag" had a label in the window, destroy and delete its label, containers and value
-			if tag in self.parameterLabels:      
-				try:
-					self.parameterLabels[tag].destroy()
-					for pCont in self.parameterContainers[tag]:
-						pCont.destroy()
-					del self.parameterLabels[tag]
-					del self.parameterValues[tag]
-					for pCont in self.parameterContainers[tag]:	
-						del pCont
-				except:
-					messagebox.showwarning("Error", "Unexpected error in destroyPreviousParameters")
+				if tag in self.parameterLabels:      
+					try:
+						self.parameterLabels[tag].destroy()
+						for pCont in self.parameterContainers[tag]:
+							pCont.destroy()
+						del self.parameterLabels[tag]
+						del self.parameterValues[tag]
+						for pCont in self.parameterContainers[tag]:	
+							del pCont
+					except:
+						messagebox.showwarning("Error", "Unexpected error in destroyPreviousParameters")
 
 
 	def addParameter(self, tag):
