@@ -84,10 +84,8 @@ class VelvetPopUp(ParentPopUp):
 
 		self.libraryNumberVar.set(1)
 
-		
 
-
-
+	# Helping function -----------------------------------------------
 
 	def disableEnable(self, isEnabledLibraryNumber):
 		if(isEnabledLibraryNumber):
@@ -108,7 +106,7 @@ class VelvetPopUp(ParentPopUp):
 
 class PossibleParamsVelvet(PossibleParamsParent):
 	def __init__(self):
-		tags = ["cov_cutoff", "max_coverage", "exp_cov", "ins_length", "ins_length2", "ins_length_long", "ins_length_sd", "ins_length2_sd", "ins_length_long_sd", "scaffolding", "shortMatePaired", "min_contig_lgth", "read_trkg", "amos_file",  "unused_reads", "max_branvh_length", "max_divergence", "max_gap_count", "min_pair_count"]
+		tags = ["k-mer", "cov_cutoff", "max_coverage", "exp_cov", "ins_length", "ins_length2", "ins_length_long", "ins_length_sd", "ins_length2_sd", "ins_length_long_sd", "scaffolding", "shortMatePaired", "min_contig_lgth", "read_trkg", "amos_file",  "unused_reads", "max_branvh_length", "max_divergence", "max_gap_count", "min_pair_count"]
 
 
 		#("param description", type, isOptionalParam)
@@ -116,7 +114,7 @@ class PossibleParamsVelvet(PossibleParamsParent):
 		self.paramDesc = {}
 
 		# FIXED PARAMETERS
-		
+		self.paramDesc["k-mer"] = ("K-mer length", 2, False)
 
 		# OPTIONAL PARAMETERS
 		self.paramDesc["cov_cutoff"] = ("Delete nodes shorter than this value. (for removing low-coverage nodes left over from the intial correction) or \"auto\"", 7, True)

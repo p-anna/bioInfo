@@ -35,14 +35,14 @@ class PossibleParamsAbyss(PossibleParamsParent):
 	def __init__(self):
 		
 
-		tags = ["a", "b", "c", "d", "e", "E", "j", "l", "m", "n", "p", "q", "s", "S", "t"]
+		tags = ["k-mer", "a", "b", "c", "d", "e", "E", "j", "l", "m", "n", "p", "q", "s", "S", "t"]
 
 		#("param description", type, isOptionalParam)
 		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7"]
 		self.paramDesc = {}
 
 		# FIXED PARAMETERS
-
+		self.paramDesc["k-mer"] = ("K-mer length", 2, False)
 
 		# OPTIONAL PARAMETERS
 		self.paramDesc["a"] = ("maximum number of branches of a bubble [2]", 2, True)
