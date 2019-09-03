@@ -19,14 +19,17 @@ class AbyssPopUp(ParentPopUp):
 		# We put two categories in a row in the frame self.readProperties from ParentPopUp
 		for rc in self.readCategList:
 			# value of the radioButton is the index in self.readCategList
-			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rc[0], variable=self.readCateg, value=indexReadCateg)
+			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rc[0], variable=self.readCateg, value=rc[1])
 			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
 
 			indexReadCateg += 1
 			
-		self.readCateg.set(1)
+		self.readCateg.set("se=")
 
+	def getFileType(self): #type of input file
+		return (self.readCateg.get())
 
+	
 
 		
 

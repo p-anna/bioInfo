@@ -27,8 +27,8 @@ class SpadesPopUp(ParentPopUp):
 		
 		# We put two categories in a row in the frame self.readProperties from ParentPopUp
 		for rc in self.readCategList:
-			# value of the radioButton is the index in self.readCategList
-			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rc[0], variable=self.readCateg, value=indexReadCateg)
+			# value of the radioButton is its terminalTag
+			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rc[0], variable=self.readCateg, value=rc[1])
 			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
 
 			#should the "read type" and "library number" group be enabled for this read category?
@@ -45,7 +45,7 @@ class SpadesPopUp(ParentPopUp):
 				messagebox.showwarning("Error", "Unexpected error with isReadTypeNeeded and isLibraryNumberNeeded")
 			indexReadCateg += 1
 			
-		self.readCateg.set(1)
+		self.readCateg.set("--pe")
 
 		indexReadCateg += 1
 		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='we')
@@ -68,14 +68,14 @@ class SpadesPopUp(ParentPopUp):
 		self.readTypeRadioButtons = []
 		
 		for rt in self.readTypeList:
-			# value of the radioButton is the index in self.readTypeList
-			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rt[0], variable=self.readTypeVar, value=indexReadType)
+			# value of the radioButton is its terminalTag
+			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rt[0], variable=self.readTypeVar, value=rt[1])
 			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
 			self.readTypeRadioButtons.append(rb)
 			indexReadCateg += 1
 			indexReadType += 1
 
-		self.readTypeVar.set(0)
+		self.readTypeVar.set("-1")
 
 		indexReadCateg += 1
 		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='we')
@@ -90,28 +90,17 @@ class SpadesPopUp(ParentPopUp):
 		self.libraryNumRadioButtons = []
 		
 		for lnc in self.libraryNumberChoices:
-			# value of the radioButton is the index in self.libraryNumberChoices
-			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=lnc[0], variable=self.libraryNumberVar, value=indexLibraryNum)
+			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=lnc, variable=self.libraryNumberVar, value=lnc)
 			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
 			self.libraryNumRadioButtons.append(rb)
 			indexReadCateg += 1
 			indexLibraryNum += 1
 
-		self.libraryNumberVar.set(1)
-
-		# Fixed parameters ----------------------------------------------
-		# using self.paramFrame and self.fixParamCount
-		# self.parameterLabels, self.parameterValues and self.parameterContainers
-		
-
-
-
+		self.libraryNumberVar.set('1')
 		
 		
 	# Helping functions -------------------------------------------------
 
-	# num == 1 -> group of "read type" RadioButtons
-	# num == 2 -> group of "library number" RadioButtons
 	def disableEnable(self, isEnabledReadType, isEnabledLibraryNumber):
 		if(isEnabledReadType):
 			stateText = NORMAL
@@ -129,8 +118,8 @@ class SpadesPopUp(ParentPopUp):
 		for lnrb in self.libraryNumRadioButtons:
 			lnrb.configure(state = stateText)
 		
-
-
+	def getFileType(self): #type of input file
+		return (self.readCateg.get(), self.readTypeVar.get(), self.libraryNumberVar.get())
 
 
 

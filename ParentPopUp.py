@@ -93,14 +93,12 @@ class ParentPopUp:
     
             
 	def openFileName(self):
-		filename = askopenfilename(filetypes =(("Fasta, fastq, sra, sam ..", ("*.fa", "*.fasta", "*.fq", "*.fastq", "*.sam", "*.bam")),("All Files","*.*")),
-                                   title = "Choose a file.")
+		filename = askopenfilename(filetypes =(("Fasta, fastq, sra, sam ..", ("*.fa", "*.fasta", "*.fq", "*.fastq", "*.sam", "*.bam")),("All Files","*.*")), title = "Choose a file.")
 		if not(filename in self.inputFiles) and str(filename) != "()" and str(filename) != "":
 			self.inputFiles[filename]=ttk.Button(self.inputFrame, text=self.buttonText(filename),
                                                  style="1I.TButton", command=lambda: self.deleteInputFile(filename))
 			self.inputFiles[filename].pack(fill=BOTH, expand=1)
-			self.inputType[filename] = (self.libraryNumber.get(), self.readCateg.get(), self.readTypeVar.get())
-			#self.inputFileFormat[filename] = self.fileForm.get()
+			self.inputType[filename] = self.getFileType() # implemented in actual classes
             
 
 	def deleteInputFile(self, text):
@@ -237,3 +235,6 @@ class ParentPopUp:
 		if str(filename) != "()" and str(filename) != "":
 			entryFileName.set(self.buttonText(filename))
         
+
+	def getFileType(self): #implemented in child classes if needed
+		return ()
