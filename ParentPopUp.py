@@ -78,19 +78,17 @@ class ParentPopUp:
 	# ---- Functionality  -----------------------------------------------------------------------
 
 	def runScript(self):
-		print('Validating the parameters...')
-		if len(self.inputFiles)==0:
-			messagebox.showwarning("Problem with the input files", "No input file is choosen")
-		else:
-			print('Running of the assembly...')
-			self.statusLabel["text"] = "Wait..."
-                
-			tmpDic = self.determineCommonDict()
-               
-			parameters = [self.whereProgram()]
-                
-			self.statusLabel["text"] = "Finished!"
-    
+		self.validationOfTheParameters()
+	
+		print('Running of the assembly...')
+		self.statusLabel["text"] = "Wait..."
+        
+		tmpDic = self.determineCommonDict()
+        
+		parameters = [self.whereProgram()]
+		
+		self.statusLabel["text"] = "Finished!"
+			
             
 	def openFileName(self):
 		filename = askopenfilename(filetypes =(("Fasta, fastq, sra, sam ..", ("*.fa", "*.fasta", "*.fq", "*.fastq", "*.sam", "*.bam")),("All Files","*.*")), title = "Choose a file.")
@@ -98,7 +96,7 @@ class ParentPopUp:
 			self.inputFiles[filename]=ttk.Button(self.inputFrame, text=self.buttonText(filename),
                                                  style="1I.TButton", command=lambda: self.deleteInputFile(filename))
 			self.inputFiles[filename].pack(fill=BOTH, expand=1)
-			self.inputType[filename] = self.getFileType() # implemented in actual classes
+			self.inputType[filename] = self.getFileType()
             
 
 	def deleteInputFile(self, text):
@@ -108,11 +106,10 @@ class ParentPopUp:
 		except:
 			messagebox.showwarning("Error", "Unexpected error deleteInputFile")
 
-	#################################### implement in specific classes ##############
+
 	def chooseParams(self):
 		root = Toplevel(self.master)
 		ParamWindow = AddicionalParamParent(root, self.possibleParameters, self)
-	##################################################################################
     
 	def buttonText(self, filename):
 		try:
@@ -238,3 +235,37 @@ class ParentPopUp:
 
 	def getFileType(self): #implemented in child classes if needed
 		return ()
+
+	#basic validation of the parameters
+	def validationOfTheParameters(self):
+		if len(self.inputFiles)==0:
+			messagebox.showwarning("Problem with the input files", "No input file is choosen")
+
+		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7"]
+		for tag in self.parameterLabels.keys():
+			tmpType = self.possibleParameters.paramDesc[tag][1]
+			#int
+			if tmpType == 2:
+				try:
+					int(self.parameterValues[tag].get())
+				except ValueError:
+					messagebox.showwarning("Problem with the parameters", "Tag: " + tag + " is not an integer")
+			#intlist
+			elif tmpType == 3:
+				lista = self.parameterValues[tag].get().split(',') #apsoluth path directories
+				lista = list(map(lambda x: x.strip(), lista))
+				try:
+					for l in lista:
+						int(l)
+				except ValueError:
+					messagebox.showwarning("Problem with the parameters", "Tag: " + tag + " is not an integer list exp.: 1, 2, 3)")
+				
+			#float
+			elif tmpType == 5:
+				try:
+					float(self.parameterValues[tag].get())
+				except ValueError:
+					messagebox.showwarning("Problem with the parameters", "Tag: " + tag + " is not a number exp.: 0.9")
+
+
+            
