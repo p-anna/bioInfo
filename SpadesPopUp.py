@@ -76,13 +76,22 @@ class SpadesPopUp(ParentPopUp):
 			indexReadType += 1
 
 		self.readTypeVar.set("-1")
+		self.isEnabledReadType = True
+
 
 		indexReadCateg += 1
 		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='we')
 		indexReadCateg += 1
 
 		#LIBRARY NUMBER
-		self.libraryNumberChoices = ['1', '2', '3', '4', '5', '6', '7', '8']
+		self.libraryNumberChoices = [('1', '-1'),
+									 ('2', '-2'),
+									 ('3', '-3'),
+									 ('4', '-4'),
+									 ('5', '-5'),
+									 ('6', '-6'),
+									 ('7', '-7'),
+									 ('8', '-8')]
 
 		self.libraryNumberVar = StringVar()
 
@@ -90,18 +99,22 @@ class SpadesPopUp(ParentPopUp):
 		self.libraryNumRadioButtons = []
 		
 		for lnc in self.libraryNumberChoices:
-			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=lnc, variable=self.libraryNumberVar, value=lnc)
+			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=lnc[0], variable=self.libraryNumberVar, value=lnc[1])
 			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
 			self.libraryNumRadioButtons.append(rb)
 			indexReadCateg += 1
 			indexLibraryNum += 1
 
-		self.libraryNumberVar.set('1')
+		self.libraryNumberVar.set('-1')
+		self.isEnabledLibraryNumber = True
 		
 		
 	# Helping functions -------------------------------------------------
 
 	def disableEnable(self, isEnabledReadType, isEnabledLibraryNumber):
+		self.isEnabledReadType = isEnabledReadType
+		self.isEnabledLibraryNumber = isEnabledLibraryNumber
+
 		if(isEnabledReadType):
 			stateText = NORMAL
 		else:
@@ -117,48 +130,100 @@ class SpadesPopUp(ParentPopUp):
 			
 		for lnrb in self.libraryNumRadioButtons:
 			lnrb.configure(state = stateText)
+
+		
 		
 	def getFileType(self): #type of input file
-		return (self.readCateg.get(), self.readTypeVar.get(), self.libraryNumberVar.get())
+		tmpFileType = self.readCateg.get()
+		if self.isEnabledReadType:
+			tmpFileType += self.readTypeVar.get()
+		if self.isEnabledLibraryNumber:
+			tmpFileType += self.libraryNumberVar.get()
+			
+		return tmpFileType
 
+	def whereProgram(self):
+		currentDir = str(sys.path[0]).split('/')
+		goBack = len(currentDir) - 3 + 1    
+		return goBack * "../" + "programs/spades/bin/spades.py"
 
+	def runParameters(self):
+		params = [self.whereProgram()]
 
+		for fileName, fileType in self.inputType.items():
+			params.append(fileType)
+			params.append(self.cwdParam(fileName))
 
 		
+		for tag in self.parameterLabels.keys():
+			# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7", "dir=8"]
+			tmpType = self.possibleParameters.paramDesc[tag][1]
+			tmpValue = self.parameterValues[tag].get()
+			#if paramater is a flag and checkbutton is checked
+			if tmpType == 1 and tmpValue == "1":
+				params.apped(tag)
+			#if int, intlist, float, options or text
+			elif tmpType == 2 or tmpType == 3 or tmpType == 5 or tmpType == 6 or tmpType == 7:
+				params.append(tag)
+				params.append(tmpValue)
+			#if file or directory
+			elif tmpType == 4 or tmpType == 8:
+				params.append(tag)
+				params.append(self.cwdParam(tmpValue))
+				
+		params.append("-o")
+		params.append(".")
+		
+		return params
+				
+	def cwdParam(self, dic):
+		currentDir = str(sys.path[0]).split('/')
+		currentDir.append('spades')
+		destenDir = str(dic).split('/')
+		n = min(len(currentDir), len(destenDir))
+		i = 0
+		while i<n and currentDir[i] == destenDir[i] :
+			i+=1
+		return '../'*(len(currentDir)-i) + "/".join(destenDir[i:])
+			
 
+		
+		
 		
 class PossibleParamsSpades(PossibleParamsParent):
 	def __init__(self):
-		tags = ["k-mer", "sc", "meta", "rna", "plasmid", "iontorrent", "only-assembler", "careful", "continue", "disable-gzip-outpu", "disable-rr", "dataset", "threads", "memory", "tmp-dir", "cov-cutoff", "phred-offset"]
+		tags = ["-k", "--sc", "--meta", "--rna", "--plasmid", "--iontorrent", "--only-assembler", "--careful", "--continue", "--disable-gzip-outpu", "--disable-rr", "--dataset", "--threads", "--memory", "--tmp-dir", "--cov-cutoff", "--phred-offset"]
 
-		#("param description", type, isOptionalParam)
-		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7"]
+		#("param description", type, isOptionalParam, [options])
+		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7", "dir=8"]
 		self.paramDesc = {}
 
 		# FIXED PARAMETERS
-		self.paramDesc["k-mer"] = ("K-mer length", 2, False)
+		self.paramDesc["-k"] = ("K-mer length", 3, False)
 		
 		# OPTIONAL PARAMETERS
 		#Basic options:
-		self.paramDesc["sc"] = ("this flag is required for MDA (single-cell) data", 1, True)
-		self.paramDesc["meta"] = ("this flag is required for metagenomic sample data", 1, True)
-		self.paramDesc["rna"] = ("this flag is required for RNA-Seq data", 1, True)
-		self.paramDesc["plasmid"] = ("runs plasmidSPAdes pipeline for plasmid detection", 1, True)
-		self.paramDesc["iontorrent"] = ("this flag is required for IonTorrent data", 1, True)
+		self.paramDesc["--sc"] = ("this flag is required for MDA (single-cell) data", 1, True)
+		self.paramDesc["--meta"] = ("this flag is required for metagenomic sample data", 1, True)
+		self.paramDesc["--rna"] = ("this flag is required for RNA-Seq data", 1, True)
+		self.paramDesc["--plasmid"] = ("runs plasmidSPAdes pipeline for plasmid detection", 1, True)
+		self.paramDesc["--iontorrent"] = ("this flag is required for IonTorrent data", 1, True)
 
 		#Pipeline options:
-		self.paramDesc["only-assembler"] = ("runs only assembling (without read error correction)", 1, True)
-		self.paramDesc["careful"] = ("tries to reduce number of mismatches and short indels", 1, True)
-		self.paramDesc["continue"] = ("continue run from the last available check-point", 1, True)
-		self.paramDesc["disable-gzip-outpu"] = ("forces error correction not to compress the corrected reads", 1, True)
-		self.paramDesc["disable-rr"] = ("disables repeat resolution stage of assembling", 1, True)
+		self.paramDesc["--only-assembler"] = ("runs only assembling (without read error correction)", 1, True)
+		self.paramDesc["--careful"] = ("tries to reduce number of mismatches and short indels", 1, True)
+		self.paramDesc["--continue"] = ("continue run from the last available check-point", 1, True)
+		self.paramDesc["--disable-gzip-outpu"] = ("forces error correction not to compress the corrected reads", 1, True)
+		self.paramDesc["--disable-rr"] = ("disables repeat resolution stage of assembling", 1, True)
 
 		#Advanced options:
-		self.paramDesc["dataset"] = ("file with dataset description in YAML format", 4, True)
-		self.paramDesc["threads"] = ("number of threads [default: 16]", 2, True)
-		self.paramDesc["memory"] = ("RAM limit for SPAdes in Gb (terminates if exceeded) [default: 250]", 2, True)
-		self.paramDesc["tmp-dir"] = ("directory for temporary files [default: <output_dir>/tmp", 4, True)
-		self.paramDesc["cov-cutoff"] = ("coverage cutoff value (a positive float number, or 'auto', or 'off') [default: 'off']", 7, True)
-		self.paramDesc["phred-offset"] = ("PHRED quality offset in the input reads (33 or 64) [default: auto-detect]", 2, True)
+		self.paramDesc["--dataset"] = ("file with dataset description in YAML format", 4, True)
+		self.paramDesc["--threads"] = ("number of threads [default: 16]", 2, True)
+		self.paramDesc["--memory"] = ("RAM limit for SPAdes in Gb (terminates if exceeded) [default: 250]", 2, True)
+		self.paramDesc["--tmp-dir"] = ("directory for temporary files [default: <output_dir>/tmp", 8, True)
+		self.paramDesc["--cov-cutoff"] = ("coverage cutoff value (a positive float number, or 'auto', or 'off') [default: 'off']", 7, True)
+		self.paramDesc["--phred-offset"] = ("PHRED quality offset in the input reads (33 or 64) [default: auto-detect]", 6, True, ["33", "64"])
 
 		super().__init__(tags)
+
+		

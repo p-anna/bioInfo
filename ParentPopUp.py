@@ -83,9 +83,14 @@ class ParentPopUp:
 		print('Running of the assembly...')
 		self.statusLabel["text"] = "Wait..."
         
-		tmpDic = self.determineCommonDict()
-        
-		parameters = [self.whereProgram()]
+		parameters = self.runParameters()
+
+		for p in parameters:
+			print(p)
+
+		#subprocess.run(["mkdir", name])
+		#subprocess.run(parameters, cwd = name)
+			
 		
 		self.statusLabel["text"] = "Finished!"
 			
@@ -139,8 +144,8 @@ class ParentPopUp:
 			i+=1
 		return '../'*(len(currentDir)-i) + "/".join(destenDir[i:])
 
-	def whereProgram(self):
-		return "Here is the program"
+	def whereProgram(self): #implemented in child classes
+		return "."
 		         
 	def outputDirectory(self):
 		return "Output directory"
@@ -240,32 +245,40 @@ class ParentPopUp:
 	def validationOfTheParameters(self):
 		if len(self.inputFiles)==0:
 			messagebox.showwarning("Problem with the input files", "No input file is choosen")
-
+			
 		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7"]
 		for tag in self.parameterLabels.keys():
+			tmpValue = self.parameterValues[tag].get()
+
+			if tmpValue == "" or tmpValue == "()":
+				messagebox.showwarning("Problem with the parameters", "Tag: " + tag + " is empty")
+			
 			tmpType = self.possibleParameters.paramDesc[tag][1]
+			
 			#int
 			if tmpType == 2:
 				try:
-					int(self.parameterValues[tag].get())
+					int(tmpValue)
 				except ValueError:
 					messagebox.showwarning("Problem with the parameters", "Tag: " + tag + " is not an integer")
 			#intlist
 			elif tmpType == 3:
-				lista = self.parameterValues[tag].get().split(',') #apsoluth path directories
+				lista = tmpValue.split(',') #apsoluth path directories
 				lista = list(map(lambda x: x.strip(), lista))
 				try:
-					for l in lista:
-						int(l)
+					for element in lista:
+						int(element)
 				except ValueError:
 					messagebox.showwarning("Problem with the parameters", "Tag: " + tag + " is not an integer list exp.: 1, 2, 3)")
 				
 			#float
 			elif tmpType == 5:
 				try:
-					float(self.parameterValues[tag].get())
+					float(tmpValue)
 				except ValueError:
 					messagebox.showwarning("Problem with the parameters", "Tag: " + tag + " is not a number exp.: 0.9")
 
 
             
+	def runParameters(self): #implemented in child classes
+		return []
