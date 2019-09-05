@@ -84,13 +84,15 @@ class ParentPopUp:
 		print('Running of the assembly...')
 		self.statusLabel["text"] = "Wait..."
         
-		parameters = self.runParameters()
+		parameterBlocks = self.runParameterBlocks()
 
-		for p in parameters:
-			print(p)
+		for pb in parameterBlocks:
+			for p in pb:
+				print(p)
 
 		#subprocess.run(["mkdir", name])
-		#subprocess.run(parameters, cwd = name)
+		#for pb in parameterBlocks:
+		#	subprocess.run(pb, cwd = name)
 			
 		
 		self.statusLabel["text"] = "Finished!"
@@ -144,9 +146,6 @@ class ParentPopUp:
 		while i<n and currentDir[i] == destenDir[i] :
 			i+=1
 		return '../'*(len(currentDir)-i) + "/".join(destenDir[i:])
-
-	def whereProgram(self): #implemented in child classes
-		return "."
 		         
 	def outputDirectory(self):
 		return "Output directory"
@@ -289,5 +288,5 @@ class ParentPopUp:
 
 
             
-	def runParameters(self): #implemented in child classes
-		return []
+	def runParameterBlocks(self): #implemented in child classes
+		return [[]]

@@ -147,7 +147,7 @@ class SpadesPopUp(ParentPopUp):
 		goBack = len(currentDir) - 3 + 1    
 		return goBack * "../" + "programs/spades/bin/spades.py"
 
-	def runParameters(self):
+	def runParameterBlocks(self):
 		params = [self.whereProgram()]
 
 		for fileName, fileType in self.inputType.items():
@@ -174,7 +174,7 @@ class SpadesPopUp(ParentPopUp):
 		params.append("-o")
 		params.append(".")
 		
-		return params
+		return [params]
 				
 	def cwdParam(self, dic):
 		currentDir = str(sys.path[0]).split('/')

@@ -2,12 +2,14 @@ from ParentPopUp import ParentPopUp
 from AddicionalParamParent import PossibleParamsParent
 from tkinter import *
 
+
 class VelvetPopUp(ParentPopUp):
 	def __init__(self, master, name, possibleParamClassInit):
 		super().__init__(master, name, possibleParamClassInit)
 		
 		#Frame: self.readProperties ----------------------------------------------------------
-				# READ CATEGORY LIST
+
+		# READ CATEGORY LIST
 		#("read categ name", "terminalTag", isLibraryNumberNeeded)
 		self.readCategList = [('short single-end reads', "-short", True),
 							  ('short paired-end reads', "-shortPaired", True),
@@ -84,11 +86,13 @@ class VelvetPopUp(ParentPopUp):
 			indexLibraryNum += 1
 
 		self.libraryNumberVar.set('')
-
+		self.isEnabledLibraryNumber = True
 
 	# Helping function -----------------------------------------------
 
 	def disableEnable(self, isEnabledLibraryNumber):
+		self.isEnabledLibraryNumber = isEnabledLibraryNumber
+		
 		if(isEnabledLibraryNumber):
 			stateText = NORMAL
 		else:
@@ -96,28 +100,68 @@ class VelvetPopUp(ParentPopUp):
 			
 		for lnrb in self.libraryNumRadioButtons:
 			lnrb.configure(state = stateText)
+			
 
 	def getFileType(self): #type of input file
-		return (self.readCateg.get(), self.readTypeVar.get(), self.libraryNumberVar.get())
+		tmpCateg = self.readCateg.get()
+		if self.isEnabledLibraryNumber:
+			tmpCateg += self.libraryNumberVar.get()
+		return [tmpCateg, self.readTypeVar.get()]
 
+	def whereProgram(self, progName):
+		currentDir = str(sys.path[0]).split('/')
+		goBack = len(currentDir) - 3 + 1    
+            
+		if progName == "H": #velveth
+			return goBack * "../" + "programs/velvet/velveth"
+		elif progName == "G": #velvetg
+			return goBack * "../" + "programs/velvet/velvetg"
+		else:
+			messagebox.showwarning("Error", "Unexpected error whereProgram") 
 
+	def runParameterBlocks(self):
+		paramsH = [self.whereProgram("H"), ".", self.parameterValues["-k"].get()]
+		
+		for fileName, fileType in self.inputType.items(): #### CHECK THIS
+			paramsH.extend(fileType)
+			paramsH.append(self.cwdParam(fileName))
 
-
+			
+		paramsG = [self.whereProgram("G"), "."]
+		
+		for tag in self.parameterLabels.keys():
+			# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7", "dir=8"]
+			tmpType = self.possibleParameters.paramDesc[tag][1]
+			tmpValue = self.parameterValues[tag].get()
+			#if paramater is a flag and checkbutton is checked
+			if tmpType == 1 and tmpValue == "1":
+				paramsG.apped(tag)
+			#if int, intlist, float, options or text
+			elif tmpType == 2 or tmpType == 3 or tmpType == 5 or tmpType == 6 or tmpType == 7:
+				paramsG.append(tag)
+				paramsG.append(tmpValue)
+			#if file or directory
+			elif tmpType == 4 or tmpType == 8:
+				paramsG.append(tag)
+				paramsG.append(self.cwdParam(tmpValue)) #### CHECK THIS
+				
+		return [paramsH, paramsG]
+		
 
 
 		
 
 class PossibleParamsVelvet(PossibleParamsParent):
 	def __init__(self):
-		tags = ["k-mer", "cov_cutoff", "max_coverage", "exp_cov", "ins_length", "ins_length2", "ins_length_long", "ins_length_sd", "ins_length2_sd", "ins_length_long_sd", "scaffolding", "shortMatePaired", "min_contig_lgth", "read_trkg", "amos_file",  "unused_reads", "max_branvh_length", "max_divergence", "max_gap_count", "min_pair_count"]
+		tags = ["-k", "cov_cutoff", "max_coverage", "exp_cov", "ins_length", "ins_length2", "ins_length_long", "ins_length_sd", "ins_length2_sd", "ins_length_long_sd", "scaffolding", "shortMatePaired", "min_contig_lgth", "read_trkg", "amos_file",  "unused_reads", "max_branvh_length", "max_divergence", "max_gap_count", "min_pair_count"]
 
 
 		#("param description", type, isOptionalParam)
-		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7"]	
+		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7", "dir=8"]	
 		self.paramDesc = {}
 
 		# FIXED PARAMETERS
-		self.paramDesc["k-mer"] = ("K-mer length", 2, False)
+		self.paramDesc["-k"] = ("K-mer length", 2, False)
 
 		# OPTIONAL PARAMETERS
 		self.paramDesc["cov_cutoff"] = ("Delete nodes shorter than this value. (for removing low-coverage nodes left over from the intial correction) or \"auto\"", 7, True)
