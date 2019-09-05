@@ -2,6 +2,7 @@ from ParentPopUp import ParentPopUp
 from AddicionalParamParent import PossibleParamsParent
 from tkinter import *
 
+
 class SpadesPopUp(ParentPopUp):
 	def __init__(self, master, name, possibleParamClassInit):
 		super().__init__(master, name, possibleParamClassInit)
@@ -132,15 +133,14 @@ class SpadesPopUp(ParentPopUp):
 			lnrb.configure(state = stateText)
 
 		
-		
 	def getFileType(self): #type of input file
 		tmpFileType = self.readCateg.get()
 		if self.isEnabledReadType:
 			tmpFileType += self.readTypeVar.get()
 		if self.isEnabledLibraryNumber:
 			tmpFileType += self.libraryNumberVar.get()
-			
 		return tmpFileType
+	
 
 	def whereProgram(self):
 		currentDir = str(sys.path[0]).split('/')
@@ -169,7 +169,7 @@ class SpadesPopUp(ParentPopUp):
 			#if file or directory
 			elif tmpType == 4 or tmpType == 8:
 				params.append(tag)
-				params.append(self.cwdParam(tmpValue))
+				params.append(self.cwdParam(tmpValue)) #### CHECK THIS
 				
 		params.append("-o")
 		params.append(".")

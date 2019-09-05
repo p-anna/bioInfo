@@ -2,6 +2,7 @@ from AddicionalParamParent import AddicionalParamParent
 from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askdirectory
 import subprocess
 from tkinter import messagebox
 import re
@@ -208,12 +209,16 @@ class ParentPopUp:
 			self.parameterContainers[tag].append(ttk.Entry(self.parameterContainers[tag][0], textvariable = self.parameterValues[tag]))
 			self.parameterContainers[tag][1].grid(row=0, column=0)
 
-		#file
-		elif typeOfParam == 4:
+		#file and directory
+		elif typeOfParam == 4 or typeOfParam == 8:
 			self.parameterValues[tag] = StringVar()
 
 			self.parameterContainers[tag].append(ttk.Entry(self.parameterContainers[tag][0], textvariable=self.parameterValues[tag], state="disabled"))
-			self.parameterContainers[tag].append(ttk.Button(self.parameterContainers[tag][0], style="P.TButton", text='Choose the file', command = lambda : self.openFileParam(self.parameterValues[tag])))
+
+			if typeOfParam == 4:
+				self.parameterContainers[tag].append(ttk.Button(self.parameterContainers[tag][0], style="P.TButton", text='Choose the file', command = lambda : self.openFileDirParam(self.parameterValues[tag], True)))
+			else:
+				self.parameterContainers[tag].append(ttk.Button(self.parameterContainers[tag][0], style="P.TButton", text='Choose the directory', command = lambda : self.openFileDirParam(self.parameterValues[tag], False)))
 			self.parameterContainers[tag][2].grid(row=0, column=0) #button for opening
 			self.parameterContainers[tag][1].grid(row=0, column=1) #entry with name of file
 
@@ -222,7 +227,7 @@ class ParentPopUp:
 			self.parameterValues[tag] = StringVar()
 
 			indexContainer = 1 #from 1, 0 is the frame
-			for option in self.possibleParameters.paramDesc[tag][2]:
+			for option in self.possibleParameters.paramDesc[tag][3]:
 				self.parameterContainers[tag].append(ttk.Radiobutton(self.parameterContainers[tag][0], style="1.TRadiobutton", text=option, variable = self.parameterValues[tag]))
 				self.parameterContainers[tag][indexContainer].grid(row=0, column=indexContainer-1)
 				indexContainer += 1
@@ -232,10 +237,14 @@ class ParentPopUp:
 		self.paramFrameRowcount += 1
 
 
-	def openFileParam(self, entryFileName):
-		filename = askopenfilename(title = "Choose a file.")
-		if str(filename) != "()" and str(filename) != "":
-			entryFileName.set(self.buttonText(filename))
+	def openFileDirParam(self, entryFileName, isFile):
+		if isFile:
+			name = askopenfilename(title = "Choose a file.")
+		else:
+			name = askdirectory()
+			
+		if str(name) != "()" and str(name) != "":
+			entryFileName.set(self.buttonText(name))
         
 
 	def getFileType(self): #implemented in child classes if needed
@@ -246,7 +255,7 @@ class ParentPopUp:
 		if len(self.inputFiles)==0:
 			messagebox.showwarning("Problem with the input files", "No input file is choosen")
 			
-		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7"]
+		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7", "dir=8"]
 		for tag in self.parameterLabels.keys():
 			tmpValue = self.parameterValues[tag].get()
 
