@@ -29,7 +29,44 @@ class AbyssPopUp(ParentPopUp):
 	def getFileType(self): #type of input file
 		return (self.readCateg.get())
 
+	def whereProgram(self):
+		return "abyss-pe"
 	
+
+	def runParameterBlocks(self):
+		params = [self.whereProgram(), "name=abyss"]
+		tmpIN = ""
+		tmpSE = ""
+		
+		for fileName in sorted(self.inputFiles.keys()):
+			tmpType = self.inputType[fileName]
+			if tmpType == "in=":
+				tmpIN += self.cwdParam(fileName) + " "
+			elif tmpType == "se=":
+				tmpSE += self.cwdParam(fileName) + " "
+			else:
+				messagebox.showwarning("Eroor", "Unexpected error in runParameterBlocks function!")
+		if tmpIN != "":
+			params.append("in=" + tmpIN)
+		if tmpSE != "":
+			params.append("se=" + tmpSE)
+
+		
+		for tag in self.parameterLabels.keys():
+			# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7", "dir=8"]
+			tmpType = self.possibleParameters.paramDesc[tag][1]
+			tmpValue = self.parameterValues[tag].get()
+			#if paramater is a flag and checkbutton is checked
+			if tmpType == 1 and tmpValue == "1":
+				params.apped(tag)
+			#if int, intlist, float, options or text
+			elif tmpType == 2 or tmpType == 3 or tmpType == 5 or tmpType == 6 or tmpType == 7:
+				params.append(tag + "=" + tmpValue)
+			#if file or directory
+			elif tmpType == 4 or tmpType == 8:
+				params.append(tag + "=" +self.cwdParam(tmpValue))
+		
+		return [params]
 
 		
 
@@ -38,14 +75,14 @@ class PossibleParamsAbyss(PossibleParamsParent):
 	def __init__(self):
 		
 
-		tags = ["k-mer", "a", "b", "c", "d", "e", "E", "j", "l", "m", "n", "p", "q", "s", "S", "t"]
+		tags = ["k", "a", "b", "c", "d", "e", "E", "j", "l", "m", "n", "p", "q", "s", "S", "t"]
 
 		#("param description", type, isOptionalParam)
-		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7"]
+		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7", "dir=8"]
 		self.paramDesc = {}
 
 		# FIXED PARAMETERS
-		self.paramDesc["k-mer"] = ("K-mer length", 2, False)
+		self.paramDesc["k"] = ("K-mer length", 2, False)
 
 		# OPTIONAL PARAMETERS
 		self.paramDesc["a"] = ("maximum number of branches of a bubble [2]", 2, True)
