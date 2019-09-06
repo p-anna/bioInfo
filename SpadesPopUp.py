@@ -9,6 +9,11 @@ class SpadesPopUp(ParentPopUp):
 
 		#Frame: self.readProperties ----------------------------------------------------------
 
+		indexReadCateg = 0        #index of read cateogry frame
+		
+		ttk.Label(self.readProperties, text= "Please choose the read category of the next input file:", style="HP.TLabel").grid(row=int(indexReadCateg / 3), columnspan=3, sticky='w')
+		indexReadCateg += 3
+
 		# READ CATEGORY LIST
 		#("read categ name", "terminalTag", isReadTypeNeeded, isLibraryNumberNeeded)
 		self.readCategList = [("single-end", "--s", False, True),
@@ -23,14 +28,13 @@ class SpadesPopUp(ParentPopUp):
 							  ('trusted contigs', "--trusted-contigs", False, False),
 							  ('untrusted contigs', "--untrusted-contigs", False, False)]
 
-		indexReadCateg = 0        #index of read cateogry frame
 		self.readCateg = StringVar()   #variable for radioButtons with read categories
 		
 		# We put two categories in a row in the frame self.readProperties from ParentPopUp
 		for rc in self.readCategList:
 			# value of the radioButton is its terminalTag
 			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rc[0], variable=self.readCateg, value=rc[1])
-			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
+			rb.grid(row=int(indexReadCateg / 3), column=(indexReadCateg % 3), sticky='w')
 
 			#should the "read type" and "library number" group be enabled for this read category?
 			#isReadTypeNeeded, isLibraryNumberNeeded
@@ -49,8 +53,11 @@ class SpadesPopUp(ParentPopUp):
 		self.readCateg.set("--pe")
 
 		indexReadCateg += 1
-		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='we')
-		indexReadCateg +=2
+		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 3), columnspan=3, sticky='we')
+		indexReadCateg +=3
+
+		ttk.Label(self.readProperties, text="Please choose the type of reads in the next input file:", style="HP.TLabel").grid(row=int(indexReadCateg / 3), columnspan=3, sticky='w')
+		indexReadCateg += 3
 		
 		#READ TYPE LIST
 		#("read type name", "terminalTag)
@@ -65,24 +72,25 @@ class SpadesPopUp(ParentPopUp):
 		
 		self.readTypeVar = StringVar()
 
-		indexReadType = 0 #index of read type
 		self.readTypeRadioButtons = []
 		
 		for rt in self.readTypeList:
 			# value of the radioButton is its terminalTag
 			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rt[0], variable=self.readTypeVar, value=rt[1])
-			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
+			rb.grid(row=int(indexReadCateg / 3), column=(indexReadCateg % 3), sticky='w')
 			self.readTypeRadioButtons.append(rb)
 			indexReadCateg += 1
-			indexReadType += 1
 
 		self.readTypeVar.set("-1")
 		self.isEnabledReadType = True
 
 
 		indexReadCateg += 1
-		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='we')
-		indexReadCateg += 1
+		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 3), columnspan=3, sticky='we')
+		indexReadCateg += 3
+
+		ttk.Label(self.readProperties, text="Please choose the library number of the next input file:", style="HP.TLabel").grid(row=int(indexReadCateg / 3), columnspan=3, sticky='w')
+		indexReadCateg += 3
 
 		#LIBRARY NUMBER
 		self.libraryNumberChoices = [('1', '-1'),
@@ -90,21 +98,17 @@ class SpadesPopUp(ParentPopUp):
 									 ('3', '-3'),
 									 ('4', '-4'),
 									 ('5', '-5'),
-									 ('6', '-6'),
-									 ('7', '-7'),
-									 ('8', '-8')]
+									 ('6', '-6')]
 
 		self.libraryNumberVar = StringVar()
 
-		indexLibraryNum = 1 #index of library number
 		self.libraryNumRadioButtons = []
 		
 		for lnc in self.libraryNumberChoices:
 			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=lnc[0], variable=self.libraryNumberVar, value=lnc[1])
-			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
+			rb.grid(row=int(indexReadCateg / 3), column=(indexReadCateg % 3), sticky='w')
 			self.libraryNumRadioButtons.append(rb)
 			indexReadCateg += 1
-			indexLibraryNum += 1
 
 		self.libraryNumberVar.set('-1')
 		self.isEnabledLibraryNumber = True

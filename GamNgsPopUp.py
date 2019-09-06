@@ -8,13 +8,19 @@ class GamNgsPopUp(ParentPopUp):
 		
 		#Frame: self.readProperties ----------------------------------------------------------
 
+		indexAssembly = 0        #index of frame
+
+		
+		ttk.Label(self.readProperties, text="Please choose the Master assembly:", style="HP.TLabel").grid(row=int(indexAssembly / 3), columnspan=3, sticky='w')
+		indexAssembly += 3
+
 		# ASSEMBLY LIST
 		#("assembly name", "terminalTag")
 		self.assemblyList = [("Abyss", "abyss/abyss-contigs.fa"),
 							 ("Velvet", "velvet/contigs.fa"),
 							 ("Spades", "spades/contigs.fasta")]
 
-		indexAssembly = 0        #index of frame
+		
 		self.assemblyMaster = StringVar()   #variable for radioButtons with assemblies
 		
 		# We put two categories in a row in the frame self.readProperties from ParentPopUp
@@ -30,6 +36,8 @@ class GamNgsPopUp(ParentPopUp):
 		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexAssembly / 3), columnspan=3, sticky='we')
 		indexAssembly +=2
 
+		ttk.Label(self.readProperties, text="Please choose the Slave assembly:", style="HP.TLabel").grid(row=int(indexAssembly / 3), columnspan=3, sticky='w')
+		indexAssembly += 3
 		
 		self.assemblySlave = StringVar()
 		
@@ -44,6 +52,9 @@ class GamNgsPopUp(ParentPopUp):
 		indexAssembly += 1
 		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexAssembly / 3), columnspan=3, sticky='we')
 		indexAssembly +=2
+
+		ttk.Label(self.readProperties, text="Orientation of reads in the next input file:", style="HP.TLabel").grid(row=int(indexAssembly / 3), columnspan=3, sticky='w')
+		indexAssembly += 3
 
 		#("read categories", "terminalTag")
 		self.readCategList = [("Forward pair", "fp"),

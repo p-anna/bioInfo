@@ -28,6 +28,8 @@ def styleTheWindow():
 						  foreground='#0d471d', padding=(10, 10, 10, 10)) #name label
 	ttk.Style().configure("P.TLabel", background='#e0f989', font=("MS Serif", 9 , "bold"),
 						  foreground='#121c06', padding=(5, 5, 5, 5))     #param label
+	ttk.Style().configure("HP.TLabel", background='#e0f989', font=("MS Serif", 9 , "bold"),
+						  foreground='#698a42', padding=(5, 5, 5, 5))     #header of categories
 
 	# ---- Entry --
 	ttk.Style().configure("TEntry", background='#c7e560', font=("MS Serif", 9, "bold"),

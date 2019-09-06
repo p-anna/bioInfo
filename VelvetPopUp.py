@@ -9,6 +9,11 @@ class VelvetPopUp(ParentPopUp):
 		
 		#Frame: self.readProperties ----------------------------------------------------------
 
+		indexReadCateg = 0        #index of the frame
+		
+		ttk.Label(self.readProperties, text= "Please choose the category of reads in the next input file:", style="HP.TLabel").grid(row=int(indexReadCateg / 3), columnspan=3, sticky='w')
+		indexReadCateg += 3
+		
 		# READ CATEGORY LIST
 		#("read categ name", "terminalTag", isLibraryNumberNeeded)
 		self.readCategList = [('short single-end reads', "-short", True),
@@ -16,14 +21,13 @@ class VelvetPopUp(ParentPopUp):
 							  ('long single-end reads', "-long", False),
 							  ('long paired-end reads', "-longPaired", False)]
 							  
-		indexReadCateg = 0        #index of read cateogry frame
 		self.readCateg = StringVar()   #variable for radioButtons with read categories
 		
 		# We put two categories in a row in the frame self.readProperties from ParentPopUp
 		for rc in self.readCategList:
 			# value of the radioButton is the index in self.readCategList
 			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rc[0], variable=self.readCateg, value=rc[1])
-			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
+			rb.grid(row=int(indexReadCateg / 3), column=(indexReadCateg % 3), sticky='w')
 
 			#should the "library number" group be enabled for this read category?
 			#isLibraryNumberNeeded
@@ -36,9 +40,13 @@ class VelvetPopUp(ParentPopUp):
 			
 		self.readCateg.set("-shortPaired")
 
-		indexReadCateg += 1
-		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='we')
-		indexReadCateg += 1
+		indexReadCateg += 3
+		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 3), columnspan=3, sticky='we')
+		indexReadCateg += 3
+
+		ttk.Label(self.readProperties, text= "Please choose the type of the next input file:", style="HP.TLabel").grid(row=int(indexReadCateg / 3), columnspan=3, sticky='w')
+		indexReadCateg += 2
+
 
 		#READ TYPE LIST
 		#("read type name", "terminalTag)
@@ -53,20 +61,22 @@ class VelvetPopUp(ParentPopUp):
 		
 		self.readTypeVar = StringVar()
 
-		indexReadType = 0 #index of read type
 		
 		for rt in self.readTypeList:
 			# value of the radioButton is the index in self.readTypeList
 			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=rt[0], variable=self.readTypeVar, value=rt[1])
-			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
+			rb.grid(row=int(indexReadCateg / 3), column=(indexReadCateg % 3), sticky='w')
 			indexReadCateg += 1
-			indexReadType += 1
 
 		self.readTypeVar.set('-fastq')
 
 		indexReadCateg += 1
-		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='we')
-		indexReadCateg += 1
+		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexReadCateg / 3), columnspan=3, sticky='we')
+		indexReadCateg += 3
+
+		ttk.Label(self.readProperties, text= "Please choose the library number of the next input file:", style="HP.TLabel").grid(row=int(indexReadCateg / 3), columnspan=3, sticky='w')
+		indexReadCateg += 3
+
 
 		#LIBRARY NUMBER
 		self.libraryNumberChoices = [('1', ''),
@@ -74,16 +84,14 @@ class VelvetPopUp(ParentPopUp):
 
 		self.libraryNumberVar = StringVar()
 
-		indexLibraryNum = 1 #index of library number
 		self.libraryNumRadioButtons = []
 		
 		for lnc in self.libraryNumberChoices:
 			# value of the radioButton is the index in self.libraryNumberChoices
 			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=lnc[0], variable=self.libraryNumberVar, value=lnc[1])
-			rb.grid(row=int(indexReadCateg / 2), column=(indexReadCateg % 2), sticky='w')
+			rb.grid(row=int(indexReadCateg / 3), column=(indexReadCateg % 3), sticky='w')
 			self.libraryNumRadioButtons.append(rb)
 			indexReadCateg += 1
-			indexLibraryNum += 1
 
 		self.libraryNumberVar.set('')
 		self.isEnabledLibraryNumber = True

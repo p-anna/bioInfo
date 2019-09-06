@@ -8,12 +8,16 @@ class AbyssPopUp(ParentPopUp):
 
 		#Frame: self.readProperties ----------------------------------------------------------
 
+		indexReadCateg = 0        #index of frame
+
+		ttk.Label(self.readProperties, text= "Please choose the library number of the next input file:", style="HP.TLabel").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='w')
+		indexReadCateg += 2
+		
 		# READ CATEGORY LIST
 		#("read categ name", "terminalTag")
 		self.readCategList = [('single-end reads', "in="),
 							  ('paired-end reads', "se=")]
 
-		indexReadCateg = 0        #index of read cateogry frame
 		self.readCateg = StringVar()   #variable for radioButtons with read categories
 		
 		# We put two categories in a row in the frame self.readProperties from ParentPopUp
