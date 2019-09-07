@@ -139,7 +139,7 @@ class VelvetPopUp(ParentPopUp):
 		
 		for tag in self.parameterLabels.keys():
 			# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7", "dir=8"]
-			tmpType = self.possibleParameters.paramDesc[tag][1]
+			tmpType = self.getTypeParam(tag)
 			tmpValue = self.parameterValues[tag].get()
 			#if paramater is a flag and checkbutton is checked
 			if tmpType == 1 and tmpValue == "1":
@@ -161,64 +161,64 @@ class VelvetPopUp(ParentPopUp):
 
 class PossibleParamsVelvet(PossibleParamsParent):
 	def __init__(self):
-		tags = ["-k", "cov_cutoff", "max_coverage", "exp_cov", "ins_length", "ins_length2", "ins_length_long", "ins_length_sd", "ins_length2_sd", "ins_length_long_sd", "scaffolding", "shortMatePaired", "min_contig_lgth", "read_trkg", "amos_file",  "unused_reads", "max_branvh_length", "max_divergence", "max_gap_count", "min_pair_count"]
+		tags = ["-k", "cov_cutoff", "max_coverage", "exp_cov", "ins_length", "ins_length2", "ins_length_long", "ins_length_sd", "ins_length2_sd", "ins_length_long_sd", "scaffolding", "shortMatePaired", "min_contig_lgth", "read_trkg", "amos_file",  "unused_reads", "max_branch_length", "max_divergence", "max_gap_count", "min_pair_count"]
 
 
-		#("param description", type, isOptionalParam)
+		#("label text", "param description", type, isOptionalParam)
 		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7", "dir=8"]	
 		self.paramDesc = {}
 
 		# FIXED PARAMETERS
-		self.paramDesc["-k"] = ("K-mer length", 2, False)
+		self.paramDesc["-k"] = ("K-mer length", "K-mer length", 2, False)
 
 		# OPTIONAL PARAMETERS
-		self.paramDesc["cov_cutoff"] = ("Delete nodes shorter than this value. (for removing low-coverage nodes left over from the intial correction) or \"auto\"", 7, True)
+		self.paramDesc["cov_cutoff"] = ("Delete shorter nodes", "Delete nodes shorter than this value. (for removing low-coverage nodes left over from the intial correction) or \"auto\"", 7, True)
 
-		self.paramDesc["max_coverage"] = ("Delete nodes longer than this value. (exclude highly covered data from your assembly e.g. plasmid, mitochondrial..)", 2, True)
+		self.paramDesc["max_coverage"] = ("Delete longer nodes", "Delete nodes longer than this value. (exclude highly covered data from your assembly e.g. plasmid, mitochondrial..)", 2, True)
 
-		self.paramDesc["exp_cov"] = ("This value is the estimate of the expected coverage in short reads of unique sequence, for resolving repeats with long reads, or \"auto\".", 7, True)
+		self.paramDesc["exp_cov"] = ("Expected coverage", "This value is the estimate of the expected coverage in short reads of unique sequence, for resolving repeats with long reads, or \"auto\".", 7, True)
         
         #If you have a sufficient coverage of short reads, and any quantity of long reads, you can use the long reads to resolve repeats in a greedy fashion. The simplest way to obtain this value is simply to observe the distribution of contig coverages. and see around which value the coverages of nodes seem to cluster (especially the longer nodes in your dataset)
 
-		self.paramDesc["ins_length"] = ("This value is the insert length. (length of the sequenced fragment, it icludes the length of the reads themselves.", 2, True)
+		self.paramDesc["ins_length"] = ("Insert length", "This value is the insert length. (length of the sequenced fragment, it icludes the length of the reads themselves.", 2, True)
         
         #To activate the use of read pairs, you must specify two parameters: the expected (i.e.  average) insert length (or at least a rough estimate), and the expected short-read k-mer coverage (see 5.2 for more information).
 
-		self.paramDesc["ins_length2"] = ("If you have two paired-end experiments, with different insert lengths. This value indicates the insert length of the second set.", 2, True)
+		self.paramDesc["ins_length2"] = ("Insert length of second set", "If you have two paired-end experiments, with different insert lengths. This value indicates the insert length of the second set.", 2, True)
 
         #Using multiple categories: You can be interested in keeping several kinds of short read sets separate. For example, if you have two paired-end experiments, with different insert lengths, mixing the two together would be a loss of information. This is why Velvet allows for the use of 2 short read channels (plus the long reads, which are yet another category). To do so, you simply need to use the appropriate options when hashing the reads (see 3.1 ). Put the shorter inserts in the first category. Supposing your first readset has an insert length around 400bp and the second one a insert length around 10,000bp, you should type:"
 
-		self.paramDesc["ins_length_long"] = ("This value is the insert length for long paired reads, if they are available. (it is used at scaffolding)", 2, True)
+		self.paramDesc["ins_length_long"] = ("Insert length for long reads", "This value is the insert length for long paired reads, if they are available. (it is used at scaffolding)", 2, True)
 
         #If you happen to have hashed paired long reads and you ordered them as explained in 4.1 you can also tell Velvet to use this information for scaffolding by indicating the corresponding insert length (remember that you still need to indicate the short-read k-mer coverage):"
 
 
-		self.paramDesc["ins_length_sd"] = ("Standard deviation for the insert length", 5, True)
-		self.paramDesc["ins_length2_sd"] = ("Standard deviations for the other insert length. (if you have to sets of reads with different lengths)", 5, True)
-		self.paramDesc["ins_length_long_sd"] = ("Standard deviation for the long paired reads (if long paired reads are available)", 5, True)
+		self.paramDesc["ins_length_sd"] = ("Standard deviation", "Standard deviation for the insert length", 5, True)
+		self.paramDesc["ins_length2_sd"] = ("Standard deviation for second set", "Standard deviations for the other insert length. (if you have to sets of reads with different lengths)", 5, True)
+		self.paramDesc["ins_length_long_sd"] = ("Standard deviation for long reads", "Standard deviation for the long paired reads (if long paired reads are available)", 5, True)
 
-		self.paramDesc["scaffolding"] = ("If you do not want scaffolding, you can turn it off.", 1, True)
+		self.paramDesc["scaffolding"] = ("No scaffolding", "If you do not want scaffolding, you can turn it off.", 1, True)
 
         #By default, Velvet will try to scaffold contigs that it cannot quite connect.  This results in sequences of N-s in the contigs.fa file, which correspond to the estimated distance between two neighbouring contigs. If you do not want this scaffolding, you can turn it off with the following switch.
         
-		self.paramDesc["shortMatePaired"] = ("Flag if one of the libraries is a mate-pair library made by circularization, and you suspect the presence of read pair contamination.", 1, True)
+		self.paramDesc["shortMatePaired"] = ("Short mate paired", "Flag if one of the libraries is a mate-pair library made by circularization, and you suspect the presence of read pair contamination.", 1, True)
 
         #Velvet will then use any available (short) paired-end library to filter out paired-end contamination within the mate-pair library.
         
-		self.paramDesc["min_contig_lgth"] = ("You can request that the contigs for output in the contigs.fa file be longer than this value.", 2, True)
+		self.paramDesc["min_contig_lgth"] = ("Min contig length", "You can request that the contigs for output in the contigs.fa file be longer than this value.", 2, True)
 
-		self.paramDesc["read_trkg"] = ("Flag for turning on the read tracking. This costs more memory and calculation time, but produces a more detailed description of the assembly.", 1, True)
+		self.paramDesc["read_trkg"] = ("Read tracking", "Flag for turning on the read tracking. This costs more memory and calculation time, but produces a more detailed description of the assembly.", 1, True)
 
-		self.paramDesc["amos_file"] = ("Flag for producing an .afg with all the assembly information in one datastructure.", 1, True)
+		self.paramDesc["amos_file"] = ("Producing AFG file", "Flag for producing an .afg with all the assembly information in one datastructure.", 1, True)
 
-		self.paramDesc["unused_reads"] = ("Flag for obtaining reads unused in the assembly into the file UnusedReads.fa", 1, True)
+		self.paramDesc["unused_reads"] = ("Unused reads", "Flag for obtaining reads unused in the assembly into the file UnusedReads.fa", 1, True)
 
-		self.paramDesc["max_branvh_length"] = ("Maximum branch length is the limit as to how long two paths must be before simplification. (default 100bp).\n Two sequences will not be merged togethe if they are sufficiently divergent.", 2, True)
+		self.paramDesc["max_branch_length"] = ("Max branch length", "Maximum branch length is the limit as to how long two paths must be before simplification. (default 100bp).\n Two sequences will not be merged togethe if they are sufficiently divergent.", 2, True)
 
-		self.paramDesc["max_divergence"] = ("Maximum divergence rate is a percentage of aligned pairs of nucleotides to the length of the longest of two sequences.\n By default, Velvet will not simplify two sequences if they are more diverged then this value. (default, 0.2)", 5, True)
+		self.paramDesc["max_divergence"] = ("Max divergence", "Maximum divergence rate is a percentage of aligned pairs of nucleotides to the length of the longest of two sequences.\n By default, Velvet will not simplify two sequences if they are more diverged then this value. (default, 0.2)", 5, True)
 
-		self.paramDesc["max_gap_count"] = ("Maximum gap count is a percentage of aligned pairs of nucleotides to the length of the longest of the two sequences.\n By default, Velvet will not simplify two sequences if more basepaires than this value of the longest sequence are unaligned. (default 3)", 2, True)
+		self.paramDesc["max_gap_count"] = ("Max gap count", "Maximum gap count is a percentage of aligned pairs of nucleotides to the length of the longest of the two sequences.\n By default, Velvet will not simplify two sequences if more basepaires than this value of the longest sequence are unaligned. (default 3)", 2, True)
 
-		self.paramDesc["min_pair_count"] = ("Minimum read-pair validation is the required number of mate pairs corroborating a connection between two contigs. (default 10)", 2, True)
+		self.paramDesc["min_pair_count"] = ("Min pair count", "Minimum read-pair validation is the required number of mate pairs corroborating a connection between two contigs. (default 10)", 2, True)
 
 		super().__init__(tags)

@@ -152,7 +152,7 @@ class ParentPopUp:
 
 	def showFixedParams(self):
 		for tag in self.possibleParameters.tags:
-			if not(self.possibleParameters.paramDesc[tag][2]): #if it is fixed parameter
+			if not(self.getIsOptionalParam(tag)): #if it is fixed parameter
 				self.addParameter(tag)
 				self.fixParamCount += 1
 
@@ -162,7 +162,7 @@ class ParentPopUp:
 		self.destroyPreviousParameters()
 		
 		for tag in self.possibleParameters.tags:
-			if self.possibleParameters.paramDesc[tag][2]: #if it is optional parameter
+			if self.getIsOptionalParam(tag): #if it is optional parameter
 				if self.possibleParameters.params[tag].get() == 1: #if checkbutton checked
 					self.addParameter(tag)
 
@@ -170,7 +170,7 @@ class ParentPopUp:
 	def destroyPreviousParameters(self):
 		#for every possible tag of an optional parameter
 		for tag in self.possibleParameters.tags:
-			if self.possibleParameters.paramDesc[tag][2]: #if it is optional parameter
+			if self.getIsOptionalParam(tag): #if it is optional parameter
 			#if "tag" had a label in the window, destroy and delete its label, containers and value
 				if tag in self.parameterLabels:      
 					try:
@@ -186,10 +186,10 @@ class ParentPopUp:
 
 
 	def addParameter(self, tag):
-		typeOfParam = self.possibleParameters.paramDesc[tag][1]
+		typeOfParam = self.getTypeParam(tag)
 		
 		# using: self.paramFrame & self.paramFrameRowcount
-		self.parameterLabels[tag] = ttk.Label(self.paramFrame, text = tag, style="P.TLabel")
+		self.parameterLabels[tag] = ttk.Label(self.paramFrame, text = self.getLabelTextParam(tag), style="P.TLabel")
 		self.parameterLabels[tag].grid(row=self.paramFrameRowcount, column=0, sticky='e')
 
 		self.parameterContainers[tag] = []
@@ -217,7 +217,7 @@ class ParentPopUp:
 			if typeOfParam == 4:
 				self.parameterContainers[tag].append(ttk.Button(self.parameterContainers[tag][0], style="P.TButton", text='Choose the file', command = lambda : self.openFileDirParam(self.parameterValues[tag], True)))
 			else:
-				self.parameterContainers[tag].append(ttk.Button(self.parameterContainers[tag][0], style="P.TButton", text='Choose the directory', command = lambda : self.openFileDirParam(self.parameterValues[tag], False)))
+				self.parameterContainers[tag].append(ttk.Button(self.parameterContainers[tag][0], style="P.TButton", text='Choose directory', command = lambda : self.openFileDirParam(self.parameterValues[tag], False)))
 			self.parameterContainers[tag][2].grid(row=0, column=0) #button for opening
 			self.parameterContainers[tag][1].grid(row=0, column=1) #entry with name of file
 
@@ -226,7 +226,7 @@ class ParentPopUp:
 			self.parameterValues[tag] = StringVar()
 
 			indexContainer = 1 #from 1, 0 is the frame
-			for option in self.possibleParameters.paramDesc[tag][3]:
+			for option in self.getOptionsParam(tag):
 				self.parameterContainers[tag].append(ttk.Radiobutton(self.parameterContainers[tag][0], style="1.TRadiobutton", text=option, variable = self.parameterValues[tag]))
 				self.parameterContainers[tag][indexContainer].grid(row=0, column=indexContainer-1)
 				indexContainer += 1
@@ -261,7 +261,7 @@ class ParentPopUp:
 			if tmpValue == "" or tmpValue == "()":
 				messagebox.showwarning("Problem with the parameters", "Tag: " + tag + " is empty")
 			
-			tmpType = self.possibleParameters.paramDesc[tag][1]
+			tmpType = self.getTypeParam(tag)
 			
 			#int
 			if tmpType == 2:
@@ -290,3 +290,18 @@ class ParentPopUp:
             
 	def runParameterBlocks(self): #implemented in child classes
 		return [[]]
+
+	def getLabelTextParam(self, tag):
+		return self.possibleParameters.paramDesc[tag][0]
+
+	def getParamDescParam(self, tag):
+		return self.possibleParameters.paramDesc[tag][1]
+
+	def getTypeParam(self, tag):
+		return self.possibleParameters.paramDesc[tag][2]
+
+	def getIsOptionalParam(self, tag):
+		return self.possibleParameters.paramDesc[tag][3]
+
+	def getOptionsParam(self, tag):
+		return self.possibleParameters.paramDesc[tag][4]

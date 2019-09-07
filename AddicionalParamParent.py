@@ -16,8 +16,8 @@ class AddicionalParamParent:
 
 		#self.possibleParameters.paramDesc[tag][0] first element o f tuple
 		for tag in self.possibleParameters.tags:
-			if self.possibleParameters.paramDesc[tag][2]:
-				ttk.Checkbutton(frame, text = tag + " - " +  self.possibleParameters.paramDesc[tag][0], style = "P.TCheckbutton", variable = self.possibleParameters.params[tag]).grid(column=0, row=rowcount, sticky = "w")
+			if self.possibleParameters.paramDesc[tag][3]:
+				ttk.Checkbutton(frame, text = tag + " - " +  self.possibleParameters.paramDesc[tag][1], style = "P.TCheckbutton", variable = self.possibleParameters.params[tag]).grid(column=0, row=rowcount, sticky = "w")
 				rowcount += 1
 
 
@@ -37,5 +37,5 @@ class PossibleParamsParent:
 		self.params = {}
 
 		for tag in self.tags:
-			if self.paramDesc[tag][2]:
+			if self.paramDesc[tag][3]:
 				self.params[tag] = IntVar(0) # variable for Checkbutton for every parameter
