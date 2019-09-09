@@ -92,8 +92,7 @@ class ParentPopUp:
 
 		#subprocess.run(["mkdir", name])
 		#for pb in parameterBlocks:
-		#	subprocess.run(pb, cwd = name)
-			
+		#	subprocess.run(pb, cwd = name)		
 		
 		self.statusLabel["text"] = "Finished!"
 			
