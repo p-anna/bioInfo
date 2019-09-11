@@ -144,8 +144,9 @@ class VelvetPopUp(ParentPopUp):
 				tmpType = self.getTypeParam(tag)
 				tmpValue = self.parameterValues[tag].get()
 				#if paramater is a flag and checkbutton is checked
-				if tmpType == 1 and tmpValue == "1":
-					paramsG.apped(tag)
+				if tmpType == 1 and tmpValue == 1:
+					paramsG.append(tag)
+					paramsG.append("yes")
 					#if int, intlist, float, options or text
 				elif tmpType == 2 or tmpType == 3 or tmpType == 5 or tmpType == 6 or tmpType == 7:
 					paramsG.append(tag)
