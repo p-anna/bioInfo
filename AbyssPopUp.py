@@ -1,6 +1,7 @@
 from ParentPopUp import ParentPopUp
 from AddicionalParamParent import PossibleParamsParent
 from tkinter import *
+import subprocess
 
 class AbyssPopUp(ParentPopUp):
 	def __init__(self, master, name, possibleParamClassInit):
@@ -10,7 +11,7 @@ class AbyssPopUp(ParentPopUp):
 
 		indexReadCateg = 0        #index of frame
 
-		ttk.Label(self.readProperties, text= "Please choose the library number of the next input file:", style="HP.TLabel").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='w')
+		ttk.Label(self.readProperties, text= "Please choose the read category of the next input file:", style="HP.TLabel").grid(row=int(indexReadCateg / 2), columnspan=2, sticky='w')
 		indexReadCateg += 2
 		
 		# READ CATEGORY LIST
@@ -70,7 +71,7 @@ class AbyssPopUp(ParentPopUp):
 			elif tmpType == 4 or tmpType == 8:
 				params.append(tag + "=" +self.cwdParam(tmpValue))
 		
-		return [params]
+		subprocess.run(params, cwd = self.name)
 
 		
 

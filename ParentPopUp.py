@@ -15,7 +15,8 @@ class ParentPopUp:
 		rowcount = 0                          # row index for grid of main frame
 		self.fixParamCount = 0                # number of required parameters
 		self.possibleParameters = possibleParamClassInit() # class with parameters
-		self.paramFrameRowcount = 0 
+		self.paramFrameRowcount = 0
+		self.name = name
 
 
 		frame = ttk.Frame(master, style="M.TFrame")
@@ -83,14 +84,16 @@ class ParentPopUp:
 	
 		print('Running of the assembly...')
 		self.statusLabel["text"] = "Wait..."
-        
+
+
+		subprocess.run(["mkdir", self.name])
 		parameterBlocks = self.runParameterBlocks()
 
-		for pb in parameterBlocks:
-			for p in pb:
-				print(p)
+		#for pb in parameterBlocks:
+		#	for p in pb:
+		#		print(p)
 
-		#subprocess.run(["mkdir", name])
+		
 		#for pb in parameterBlocks:
 		#	subprocess.run(pb, cwd = name)		
 		
