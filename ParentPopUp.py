@@ -85,7 +85,7 @@ class ParentPopUp:
 		print('Running of the assembly...')
 		self.statusLabel["text"] = "Wait..."
 
-
+		subprocess.run(["rm", "-r", self.name])
 		subprocess.run(["mkdir", self.name])
 		parameterBlocks = self.runParameterBlocks()
 
@@ -103,7 +103,7 @@ class ParentPopUp:
 	def openFileName(self):
 		filename = askopenfilename(filetypes =(("Fasta, fastq, sra, sam ..", ("*.fa", "*.fasta", "*.fq", "*.fastq", "*.sam", "*.bam")),("All Files","*.*")), title = "Choose a file.")
 		if not(filename in self.inputFiles) and str(filename) != "()" and str(filename) != "":
-			self.inputFiles[filename]=ttk.Button(self.inputFrame, text=self.buttonText(filename),
+			self.inputFiles[filename]=ttk.Button(self.inputFrame, text=self.onlyNameOfFile(filename),
                                                  style="1I.TButton", command=lambda: self.deleteInputFile(filename))
 			self.inputFiles[filename].pack(fill=BOTH, expand=1)
 			self.inputType[filename] = self.getFileType()
@@ -121,12 +121,12 @@ class ParentPopUp:
 		root = Toplevel(self.master)
 		ParamWindow = AddicionalParamParent(root, self.possibleParameters, self)
     
-	def buttonText(self, filename):
+	def onlyNameOfFile(self, filename):
 		try:
 			m = re.search('.*/(.*)', filename)
-			return "x   " + m.group(1)
+			return m.group(1)
 		except:
-			messagebox.showwarning("Error", "Unexpected error buttonText")
+			messagebox.showwarning("Error", "Unexpected error onlyNameOfFile")
 
 	def determineCommonDict(self):
 		lista = str(next(iter(self.inputFiles))).split('/')[:-1] #apsoluth path directories
@@ -141,7 +141,7 @@ class ParentPopUp:
             
 	def cwdParam(self, dic):
 		currentDir = str(sys.path[0]).split('/')
-		currentDir.append('spades')
+		currentDir.append(self.name)
 		destenDir = str(dic).split('/')
 		n = min(len(currentDir), len(destenDir))
 		i = 0
@@ -231,7 +231,6 @@ class ParentPopUp:
 			indexContainer = 1 #from 1, 0 is the frame
 			for option in self.getOptionsParam(tag):
 
-				### style="1.TRadiobutton", text=rc[0], variable=self.readCateg, value=rc[1]
 				self.parameterContainers[tag].append(ttk.Radiobutton(self.parameterContainers[tag][0], style="1.TRadiobutton", text=option, variable=self.parameterValues[tag], value=option))
 				self.parameterContainers[tag][indexContainer].grid(row=0, column=indexContainer-1)
 				indexContainer += 1
@@ -248,7 +247,7 @@ class ParentPopUp:
 			name = askdirectory()
 			
 		if str(name) != "()" and str(name) != "":
-			entryFileName.set(self.buttonText(name))
+			entryFileName.set(name)
         
 
 	def getFileType(self): #implemented in child classes if needed

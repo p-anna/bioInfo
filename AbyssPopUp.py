@@ -16,8 +16,8 @@ class AbyssPopUp(ParentPopUp):
 		
 		# READ CATEGORY LIST
 		#("read categ name", "terminalTag")
-		self.readCategList = [('single-end reads', "in="),
-							  ('paired-end reads', "se=")]
+		self.readCategList = [('single-end reads', "se="),
+							  ('paired-end reads', "in=")]
 
 		self.readCateg = StringVar()   #variable for radioButtons with read categories
 		
@@ -50,7 +50,7 @@ class AbyssPopUp(ParentPopUp):
 			elif tmpType == "se=":
 				tmpSE += self.cwdParam(fileName) + " "
 			else:
-				messagebox.showwarning("Eroor", "Unexpected error in runParameterBlocks function!")
+				messagebox.showwarning("Error", "Unexpected error in runParameterBlocks function!")
 		if tmpIN != "":
 			params.append("in=" + tmpIN)
 		if tmpSE != "":
@@ -70,10 +70,9 @@ class AbyssPopUp(ParentPopUp):
 			#if file or directory
 			elif tmpType == 4 or tmpType == 8:
 				params.append(tag + "=" +self.cwdParam(tmpValue))
-		
+
 		subprocess.run(params, cwd = self.name)
 
-		
 
 
 class PossibleParamsAbyss(PossibleParamsParent):

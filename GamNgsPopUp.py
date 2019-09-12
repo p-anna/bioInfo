@@ -1,5 +1,6 @@
 from ParentPopUp import ParentPopUp
 from AddicionalParamParent import PossibleParamsParent
+from ResultPopUp import *
 from tkinter import *
 import subprocess
 
@@ -11,15 +12,17 @@ class GamNgsPopUp(ParentPopUp):
 
 		indexAssembly = 0        #index of frame
 		self.myFolderName = name + "/"
+		self.genExeptedSize = ""
+		self.threadNumber = "4"
 				
 		ttk.Label(self.readProperties, text="Please choose the Master assembly:", style="HP.TLabel").grid(row=int(indexAssembly / 3), columnspan=3, sticky='w')
 		indexAssembly += 3
 
 		# ASSEMBLY LIST
 		#("assembly name", "terminalTag")
-		self.assemblyList = [("Abyss", "abyss/abyss-contigs.fa"),
-							 ("Velvet", "velvet/contigs.fa"),
-							 ("Spades", "spades/contigs.fasta")]
+		self.assemblyList = [("ABySS", "ABySS/abyss-contigs.fa"),
+							 ("Velvet", "Velvet/contigs.fa"),
+							 ("SPAdes", "SPAdes/contigs.fasta")]
 
 		
 		self.assemblyMaster = StringVar()   #variable for radioButtons with assemblies
@@ -31,8 +34,8 @@ class GamNgsPopUp(ParentPopUp):
 			rb.grid(row=int(indexAssembly / 3), column=indexAssembly % 3, sticky='w')
 			indexAssembly += 1
 			
-		self.assemblyMaster.set("abyss/abyss-contigs.fa")
-		self.masterName = "Abyss"
+		self.assemblyMaster.set("ABySS/abyss-contigs.fa")
+		self.masterName = "ABySS"
 
 		indexAssembly += 1
 		ttk.Separator(self.readProperties, orient="horizontal").grid(row=int(indexAssembly / 3), columnspan=3, sticky='we')
@@ -49,7 +52,7 @@ class GamNgsPopUp(ParentPopUp):
 			rb.grid(row=int(indexAssembly / 3), column=indexAssembly % 3, sticky='w')
 			indexAssembly += 1
 
-		self.assemblySlave.set("velvet/contigs.fa")
+		self.assemblySlave.set("Velvet/contigs.fa")
 		self.slaveName = "Velvet"
 
 		indexAssembly += 1
@@ -86,15 +89,13 @@ class GamNgsPopUp(ParentPopUp):
 		return "."
 	
 	def runParameterBlocks(self):
+		
 		originalFaMaster = self.assemblyMaster.get()
 		originalFaSlave= self.assemblySlave.get()
 
 		
 		subprocess.run(["cp", originalFaMaster, self.myFolderName + self.masterName + ".fa"])
 		subprocess.run(["cp", originalFaSlave, self.myFolderName + self.slaveName + ".fa"])
-
-		print(self.masterName)
-		print(self.slaveName)
 
 		assemblyFileName = [self.masterName, self.slaveName]
 		
@@ -104,94 +105,109 @@ class GamNgsPopUp(ParentPopUp):
 
 		nameOfReads = []
 		extensionOfReads = []
-		readFile = []
+		readsFile = []
 		saiFile1 = []
 		saiFile2 = []
-		for iFile in sorted(self.inputFiles):
+		for iFileFull in sorted(self.inputFiles):
+			iFile = self.onlyNameOfFile(iFileFull)
 			nameOfReads.append(iFile)
 			extensionOfReads.append(".fq")
-			readFile.append("../" + iFile)
+			readsFile.append("../" + iFile)
 			saiFile1.append(iFile + "1.sai")
-			saiFiel2.append(iFile + "2.sai")
+			saiFile2.append(iFile + "2.sai")
 
-		threadNumber = "4"
+
+		#for i in range(2):
+		#	print("faFile: " + faFile[i])
+		#	print("nameOfReads: " + nameOfReads[i])
+		#	print("extensionOfReads: " + extensionOfReads[i])
+		#	print("readsFile: " + readsFile[i])
+		#	print("saiFile1: " + saiFile1[i])
+		#	print("saiFile2: " + saiFile2[i])
+
+		for tag in self.parameterLabels.keys():
+			if tag == "Expected size":
+				self.genExeptedSize = self.parameterValues[tag].get()
+			elif tag == "Thread number":
+				self.threadNumber = self.parameterValues[tag].get()
+		
 
 		
-		subprocess.run(["bwa", "index", faFile[0]], cwd = gamResultPath)
-		subprocess.run(["bwa", "aln", "-o", "0", "-t", threadNumber, faFile[0], readsFile[0]], stdout=open(gamResultPath + saiFile1[0], "w"), cwd = gamResultPath)
-		subprocess.run(["bwa", "aln", "-o", "0", "-t", threadNumber, faFile[0], readsFile[1]], stdout=open(gamResultPath + saiFile2[0], "w"), cwd = gamResultPath)
-		sampeOut = subprocess.Popen(["bwa", "sampe", faFile[0], saiFile1[0], saiFile2[0], readsFile[0], readsFile[1]], stdout = subprocess.PIPE, cwd = gamResultPath)
-		viewOut = subprocess.Popen(["samtools", "view", "-Shu", "-"], stdin=sampeOut.stdout, stdout = subprocess.PIPE, cwd = gamResultPath)
+		subprocess.run(["bwa", "index", faFile[0]], cwd = self.name)
+		subprocess.run(["bwa", "aln", "-o", "0", "-t", self.threadNumber, faFile[0], readsFile[0]], stdout=open(self.name + "/" + saiFile1[0], "w"), cwd = self.name)
+		subprocess.run(["bwa", "aln", "-o", "0", "-t", self.threadNumber, faFile[0], readsFile[1]], stdout=open(self.name + "/" + saiFile2[0], "w"), cwd = self.name)
+		sampeOut = subprocess.Popen(["bwa", "sampe", faFile[0], saiFile1[0], saiFile2[0], readsFile[0], readsFile[1]], stdout = subprocess.PIPE, cwd = self.name)
+		viewOut = subprocess.Popen(["samtools", "view", "-Shu", "-"], stdin=sampeOut.stdout, stdout = subprocess.PIPE, cwd = self.name)
 		sampeOut.stdout.close()
-		subprocess.run(["samtools", "sort", "-", assemblyFileName[0] + ".sorted"], stdin=viewOut.stdout, cwd = gamResultPath)
+		subprocess.run(["samtools", "sort", "-", assemblyFileName[0] + ".sorted"], stdin=viewOut.stdout, cwd = self.name)
 		viewOut.stdout.close()
 
-		subprocess.run(["samtools", "index", assemblyFileName[0] + ".sorted.bam"], cwd = gamResultPath)
-		txtFile = open(gamResultPath + assemblyFileName[0] + ".list.txt", "w")
-		subprocess.run(["echo", "-e", assemblyFileName[0] + ".sorted.bam\n 90 270"], stdout=txtFile, cwd = gamResultPath)
+		subprocess.run(["samtools", "index", assemblyFileName[0] + ".sorted.bam"], cwd = self.name)
+		txtFile = open(self.name + "/" +  assemblyFileName[0] + ".list.txt", "w")
+		subprocess.run(["echo", "-e", assemblyFileName[0] + ".sorted.bam\n 90 270"], stdout=txtFile, cwd = self.name)
 		txtFile.close()
 
 		# Slave -------------------------------------------------------------------------------------------------------------------------------------
 
-		subprocess.run(["bwa", "index", faFile[1]], cwd = gamResultPath)
-		subprocess.run(["bwa", "aln", "-o", "0", "-t", threadNumber, faFile[1], readsFile[0]], stdout=open(gamResultPath + saiFile1[1], "w"), cwd = gamResultPath)
-		subprocess.run(["bwa", "aln", "-o", "0", "-t", threadNumber, faFile[1], readsFile[1]], stdout=open(gamResultPath + saiFile2[1], "w"), cwd = gamResultPath)
-		sampeOut = subprocess.Popen(["bwa", "sampe", faFile[1], saiFile1[1], saiFile2[1], readsFile[0], readsFile[1]], stdout = subprocess.PIPE, cwd = gamResultPath)
-		viewOut = subprocess.Popen(["samtools", "view", "-Shu", "-"], stdin=sampeOut.stdout, stdout = subprocess.PIPE, cwd = gamResultPath)
+		subprocess.run(["bwa", "index", faFile[1]], cwd = self.name)
+		subprocess.run(["bwa", "aln", "-o", "0", "-t", self.threadNumber, faFile[1], readsFile[0]], stdout=open(self.name + "/" + saiFile1[1], "w"), cwd = self.name)
+		subprocess.run(["bwa", "aln", "-o", "0", "-t", self.threadNumber, faFile[1], readsFile[1]], stdout=open(self.name + "/" + saiFile2[1], "w"), cwd = self.name)
+		sampeOut = subprocess.Popen(["bwa", "sampe", faFile[1], saiFile1[1], saiFile2[1], readsFile[0], readsFile[1]], stdout = subprocess.PIPE, cwd = self.name)
+		viewOut = subprocess.Popen(["samtools", "view", "-Shu", "-"], stdin=sampeOut.stdout, stdout = subprocess.PIPE, cwd = self.name)
 		sampeOut.stdout.close()
-		subprocess.run(["samtools", "sort", "-", assemblyFileName[1] + ".sorted"], stdin=viewOut.stdout, cwd = gamResultPath)
+		subprocess.run(["samtools", "sort", "-", assemblyFileName[1] + ".sorted"], stdin=viewOut.stdout, cwd = self.name)
 		viewOut.stdout.close()
 
-		subprocess.run(["samtools", "index", assemblyFileName[1] + ".sorted.bam"], cwd = gamResultPath)
+		subprocess.run(["samtools", "index", assemblyFileName[1] + ".sorted.bam"], cwd = self.name)
 
-		txtFile = open(gamResultPath + assemblyFileName[1] + ".list.txt", "w")
-		subprocess.run(["echo", "-e", assemblyFileName[1] + ".sorted.bam\n 90 270"], stdout=txtFile, cwd = gamResultPath)
+		txtFile = open(self.name + "/" + assemblyFileName[1] + ".list.txt", "w")
+		subprocess.run(["echo", "-e", assemblyFileName[1] + ".sorted.bam\n 90 270"], stdout=txtFile, cwd = self.name)
 		txtFile.close()
 
 		# Merge----------------------------------------------------------------------------------------------------------------------------------------
 		gamPath = "../../../../../programs/gam-ngs/bin/"
 		minBlockSize = "7"
 
-		subprocess.run([gamPath + "gam-create", "--master-bam", assemblyFileName[0] + ".list.txt", "--slave-bam", assemblyFileName[1] + ".list.txt", "--min-block-size", minBlockSize], cwd = gamResultPath)
+		subprocess.run([gamPath + "gam-create", "--master-bam", assemblyFileName[0] + ".list.txt", "--slave-bam", assemblyFileName[1] + ".list.txt", "--min-block-size", minBlockSize], cwd = self.name)
 		subprocess.run([gamPath + "gam-merge", "--blocks-file", "out.blocks", "--master-bam", assemblyFileName[0] + ".list.txt", "--master-fasta", faFile[0],
-                        "--slave-bam", assemblyFileName[1] + ".list.txt", "--slave-fasta", faFile[1], "--min-block-size", minBlockSize], cwd = gamResultPath)
+                        "--slave-bam", assemblyFileName[1] + ".list.txt", "--slave-fasta", faFile[1], "--min-block-size", minBlockSize], cwd = self.name)
 
 		# BAM file for assembled
 		outFaFile = "out.gam.fasta"
 		gamsaiFile1 = "gam" + nameOfReads[0] + ".sai"
 		gamsaiFile2 = "gam" + nameOfReads[1] + ".sai"
 
-		subprocess.run(["bwa", "index", outFaFile], cwd = gamResultPath)
+		subprocess.run(["bwa", "index", outFaFile], cwd = self.name)
 
 
-		subprocess.run(["bwa", "aln", "-o", "0", "-t", threadNumber, outFaFile, readsFile[0]], stdout=open(gamResultPath + gamsaiFile1, "w"), cwd = gamResultPath)
-		subprocess.run(["bwa", "aln", "-o", "0", "-t", threadNumber, outFaFile, readsFile[1]], stdout=open(gamResultPath + gamsaiFile2, "w"), cwd = gamResultPath)
-		sampeOut = subprocess.Popen(["bwa", "sampe", outFaFile, gamsaiFile1, gamsaiFile2, readsFile[0], readsFile[1]], stdout = subprocess.PIPE, cwd = gamResultPath)
-		viewOut = subprocess.Popen(["samtools", "view", "-Shu", "-"], stdin=sampeOut.stdout, stdout = subprocess.PIPE, cwd = gamResultPath)
+		subprocess.run(["bwa", "aln", "-o", "0", "-t", self.threadNumber, outFaFile, readsFile[0]], stdout=open(self.name + "/" + gamsaiFile1, "w"), cwd = self.name)
+		subprocess.run(["bwa", "aln", "-o", "0", "-t", self.threadNumber, outFaFile, readsFile[1]], stdout=open(self.name + "/" + gamsaiFile2, "w"), cwd = self.name)
+		sampeOut = subprocess.Popen(["bwa", "sampe", outFaFile, gamsaiFile1, gamsaiFile2, readsFile[0], readsFile[1]], stdout = subprocess.PIPE, cwd = self.name)
+		viewOut = subprocess.Popen(["samtools", "view", "-Shu", "-"], stdin=sampeOut.stdout, stdout = subprocess.PIPE, cwd = self.name)
 		sampeOut.stdout.close()
-		subprocess.run(["samtools", "sort", "-", "gam.sorted"], stdin=viewOut.stdout, cwd = gamResultPath)
+		subprocess.run(["samtools", "sort", "-", "gam.sorted"], stdin=viewOut.stdout, cwd = self.name)
 		viewOut.stdout.close()
 
-		subprocess.run(["samtools", "index", "gam.sorted.bam"], cwd = gamResultPath)
+		subprocess.run(["samtools", "index", "gam.sorted.bam"], cwd = self.name)
+
+		subprocess.run(["rm", "gam.sorted_contigsTable.csv",
+						self.masterName + ".sorted_contigsTable.csv",
+						self.slaveName + ".sorted_contigsTable.csv"])
 
 		self.openResult()
 
 
-		
-		
-		return [[]]
-
 
 	def openResult(self):
 		root = Toplevel(self.master)
-		myResult = ResultPopUp(root, self.masterName, self.slaveName, "1")
+		myResult = ResultPopUp(root, self.masterName, self.slaveName, self.genExeptedSize)
 
 
 class PossibleParamsGamNgs(PossibleParamsParent):
 	def __init__(self):
 		
 
-		tags = ["Expected size of the genome:", "Thread number"]
+		tags = ["Expected size", "Thread number"]
 
 		#("label text", "param description", type, isOptionalParam)
 		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7", "dir=8"]
@@ -200,7 +216,7 @@ class PossibleParamsGamNgs(PossibleParamsParent):
 		# FIXED PARAMETERS
 
 		# OPTIONAL PARAMETERS
-		self.paramDesc["Expected size of the genome:"] = ("Expected size of the genome:", "Expected size of the genome", 2, True)
+		self.paramDesc["Expected size"] = ("Expected size of the genome:", "Expected size of the genome", 2, True)
 		self.paramDesc["Thread number"] = ("Number of threads", "Number of threads", 2, True)
 		
 		super().__init__(tags)
