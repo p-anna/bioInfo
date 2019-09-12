@@ -230,7 +230,9 @@ class ParentPopUp:
 
 			indexContainer = 1 #from 1, 0 is the frame
 			for option in self.getOptionsParam(tag):
-				self.parameterContainers[tag].append(ttk.Radiobutton(self.parameterContainers[tag][0], style="1.TRadiobutton", text=option, variable = self.parameterValues[tag]))
+
+				### style="1.TRadiobutton", text=rc[0], variable=self.readCateg, value=rc[1]
+				self.parameterContainers[tag].append(ttk.Radiobutton(self.parameterContainers[tag][0], style="1.TRadiobutton", text=option, variable=self.parameterValues[tag], value=option))
 				self.parameterContainers[tag][indexContainer].grid(row=0, column=indexContainer-1)
 				indexContainer += 1
 		else:
