@@ -103,14 +103,14 @@ class GamNgsPopUp(ParentPopUp):
 		for afn in assemblyFileName:
 			faFile.append(afn + ".fa")
 
-		nameOfReads = []
+		self.nameOfReads = []
 		extensionOfReads = []
 		readsFile = []
 		saiFile1 = []
 		saiFile2 = []
 		for iFileFull in sorted(self.inputFiles):
 			iFile = self.onlyNameOfFile(iFileFull)
-			nameOfReads.append(iFile)
+			self.nameOfReads.append(iFile)
 			extensionOfReads.append(".fq")
 			readsFile.append("../" + iFile)
 			saiFile1.append(iFile + "1.sai")
@@ -119,7 +119,7 @@ class GamNgsPopUp(ParentPopUp):
 
 		#for i in range(2):
 		#	print("faFile: " + faFile[i])
-		#	print("nameOfReads: " + nameOfReads[i])
+		#	print("nameOfReads: " + self.nameOfReads[i])
 		#	print("extensionOfReads: " + extensionOfReads[i])
 		#	print("readsFile: " + readsFile[i])
 		#	print("saiFile1: " + saiFile1[i])
@@ -174,8 +174,8 @@ class GamNgsPopUp(ParentPopUp):
 
 		# BAM file for assembled
 		outFaFile = "out.gam.fasta"
-		gamsaiFile1 = "gam" + nameOfReads[0] + ".sai"
-		gamsaiFile2 = "gam" + nameOfReads[1] + ".sai"
+		gamsaiFile1 = "gam" + self.nameOfReads[0] + ".sai"
+		gamsaiFile2 = "gam" + self.nameOfReads[1] + ".sai"
 
 		subprocess.run(["bwa", "index", outFaFile], cwd = self.name)
 
@@ -200,7 +200,7 @@ class GamNgsPopUp(ParentPopUp):
 
 	def openResult(self):
 		root = Toplevel(self.master)
-		myResult = ResultPopUp(root, self.masterName, self.slaveName, self.genExeptedSize)
+		myResult = ResultPopUp(root, self.masterName, self.slaveName, self.genExeptedSize, self.nameOfReads[0], self.nameOfReads[1])
 
 
 class PossibleParamsGamNgs(PossibleParamsParent):

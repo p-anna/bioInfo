@@ -7,7 +7,7 @@ import time
 
 
 class ResultPopUp:
-	def __init__(self, master, masterName, slaveName, expectedGenomeSize):
+	def __init__(self, master, masterName, slaveName, expectedGenomeSize, reads1, reads2):
 		self.master = master
 
 		# Statistic  GAGE ----------------------------------------------------------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ class ResultPopUp:
         # java GetFastaStats -o -min 200 -genomeSize <Genome Expected Size> <Contig Fasta/Scaffold Fasta>
         # Columns of table from GAGE statistics
 
-		commonPath = "../../Documents/MasterRad/python/program/gam-ngs/"
+		commonPath = "../../Documents/MasterRad/python/program/GAM-NGS/"
 
 		try:
 			genSize = int(expectedGenomeSize)
@@ -82,9 +82,9 @@ class ResultPopUp:
 		#./FRC --pe-sam gam.sorted.bam --output gam
 		FRCPath = "../../../../programs/FRC_align-master/bin/FRC"
 
-		subprocess.run([FRCPath, "--pe-sam", "gam-ngs/gam.sorted.bam", "--output", "statistics/gam-ngs"])
-		subprocess.run([FRCPath, "--pe-sam", "gam-ngs/" + masterName + ".sorted.bam", "--output", "statistics/" + masterName])
-		subprocess.run([FRCPath, "--pe-sam", "gam-ngs/" + slaveName + ".sorted.bam", "--output", "statistics/" + slaveName])
+		subprocess.run([FRCPath, "--pe-sam", "GAM-NGS/gam.sorted.bam", "--output", "statistics/gam-ngs"])
+		subprocess.run([FRCPath, "--pe-sam", "GAM-NGS/" + masterName + ".sorted.bam", "--output", "statistics/" + masterName])
+		subprocess.run([FRCPath, "--pe-sam", "GAM-NGS/" + slaveName + ".sorted.bam", "--output", "statistics/" + slaveName])
 
 		plotScriptPath = 'statistics/plotScript.gp'
 		plotScript = open(plotScriptPath, 'w')
@@ -108,8 +108,8 @@ class ResultPopUp:
 		label['image'] = self.master.image1
 		label.pack(fill = 'both', expand = True, side = 'bottom')
 
-		subprocess.run(["rm", "spades.sorted_contigsTable.csv"])
-		subprocess.run(["rm", "abyss.sorted_contigsTable.csv"])
+		subprocess.run(["rm", "SPAdes.sorted_contigsTable.csv"])
+		subprocess.run(["rm", "ABySS.sorted_contigsTable.csv"])
 		subprocess.run(["rm", "velvet.sorted_contigsTable.csv"])
 		subprocess.run(["rm", "gam.sorted_contigsTable.csv"])
 
@@ -117,8 +117,8 @@ class ResultPopUp:
 		############ DATASET INFORMATION #########################################################################
 		
 	
-		self.forwardReads = "read1.fq"
-		self.reverseReads = "read2.fq"
+		self.forwardReads = reads1
+		self.reverseReads = reads2
 
 		frame = ttk.Frame(master, style="M.TFrame")
 		frame.pack(fill='both', expand=True)
