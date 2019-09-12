@@ -167,7 +167,7 @@ class SpadesPopUp(ParentPopUp):
 			tmpValue = self.parameterValues[tag].get()
 			#if paramater is a flag and checkbutton is checked
 			if tmpType == 1 and tmpValue == 1:
-				params.apped(tag)
+				params.append(tag)
 			#if int, intlist, float, options or text
 			elif tmpType == 2 or tmpType == 3 or tmpType == 5 or tmpType == 6 or tmpType == 7:
 				params.append(tag)

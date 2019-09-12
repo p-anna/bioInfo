@@ -203,6 +203,7 @@ class ParentPopUp:
 			self.parameterValues[tag] = IntVar()
 			self.parameterContainers[tag].append(ttk.Checkbutton(self.parameterContainers[tag][0], style="1.TRadiobutton", text="", variable = self.parameterValues[tag]))
 			self.parameterContainers[tag][1].grid(row=0, column=0)
+			self.parameterValues[tag].set(1)
 
 		#int, int list, float, string
 		elif(typeOfParam == 2 or typeOfParam == 3 or typeOfParam == 5 or typeOfParam == 7):
