@@ -12,7 +12,7 @@ class BioInfoApp():
 		####  Map of assemblies and their classes ###################
 
 		assemblyClassMaker = {}
-		assemblyClassMaker["Spades"] = lambda root : SpadesPopUp(root, "Spades", lambda : PossibleParamsSpades())
+		assemblyClassMaker["SPAdes"] = lambda root : SpadesPopUp(root, "SPAdes", lambda : PossibleParamsSpades())
 		assemblyClassMaker["ABySS"] = lambda root : AbyssPopUp(root, "ABySS", lambda : PossibleParamsAbyss())
 		assemblyClassMaker["Velvet"] = lambda root : VelvetPopUp(root, "Velvet", lambda : PossibleParamsVelvet())
 

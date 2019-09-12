@@ -1,6 +1,7 @@
 from ParentPopUp import ParentPopUp
 from AddicionalParamParent import PossibleParamsParent
 from tkinter import *
+import subprocess
 
 
 class SpadesPopUp(ParentPopUp):
@@ -93,12 +94,12 @@ class SpadesPopUp(ParentPopUp):
 		indexReadCateg += 3
 
 		#LIBRARY NUMBER
-		self.libraryNumberChoices = [('1', '-1'),
-									 ('2', '-2'),
-									 ('3', '-3'),
-									 ('4', '-4'),
-									 ('5', '-5'),
-									 ('6', '-6')]
+		self.libraryNumberChoices = [('1', '1'),
+									 ('2', '2'),
+									 ('3', '3'),
+									 ('4', '4'),
+									 ('5', '5'),
+									 ('6', '6')]
 
 		self.libraryNumberVar = StringVar()
 
@@ -110,7 +111,7 @@ class SpadesPopUp(ParentPopUp):
 			self.libraryNumRadioButtons.append(rb)
 			indexReadCateg += 1
 
-		self.libraryNumberVar.set('-1')
+		self.libraryNumberVar.set('1')
 		self.isEnabledLibraryNumber = True
 		
 		
@@ -139,10 +140,11 @@ class SpadesPopUp(ParentPopUp):
 		
 	def getFileType(self): #type of input file
 		tmpFileType = self.readCateg.get()
-		if self.isEnabledReadType:
-			tmpFileType += self.readTypeVar.get()
+		
 		if self.isEnabledLibraryNumber:
 			tmpFileType += self.libraryNumberVar.get()
+		if self.isEnabledReadType:
+			tmpFileType += self.readTypeVar.get()
 		return tmpFileType
 	
 
@@ -164,7 +166,7 @@ class SpadesPopUp(ParentPopUp):
 			tmpType = self.getTypeParam(tag)
 			tmpValue = self.parameterValues[tag].get()
 			#if paramater is a flag and checkbutton is checked
-			if tmpType == 1 and tmpValue == "1":
+			if tmpType == 1 and tmpValue == 1:
 				params.apped(tag)
 			#if int, intlist, float, options or text
 			elif tmpType == 2 or tmpType == 3 or tmpType == 5 or tmpType == 6 or tmpType == 7:
@@ -177,9 +179,15 @@ class SpadesPopUp(ParentPopUp):
 				
 		params.append("-o")
 		params.append(".")
+
+		for p in params:
+			print(p)
 		
-		return [params]
-				
+		subprocess.run(params, cwd = self.name)
+
+
+
+		
 	def cwdParam(self, dic):
 		currentDir = str(sys.path[0]).split('/')
 		currentDir.append('spades')
@@ -192,7 +200,9 @@ class SpadesPopUp(ParentPopUp):
 			
 
 		
-		
+
+
+	
 		
 class PossibleParamsSpades(PossibleParamsParent):
 	def __init__(self):
