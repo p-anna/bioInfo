@@ -1,6 +1,7 @@
 from ParentPopUp import ParentPopUp
 from AddicionalParamParent import PossibleParamsParent
 from ResultPopUp import *
+from QuastPopUp import *
 from tkinter import *
 import subprocess
 
@@ -14,7 +15,12 @@ class GamNgsPopUp(ParentPopUp):
 		self.myFolderName = name + "/"
 		self.genExeptedSize = ""
 		self.threadNumber = "4"
-				
+		quastClassMaker = lambda root : QuastPopUp(root, "Quast", lambda : PossibleParamsQuast())
+		
+		quastButton = ttk.Button(self.additionalFrame, text="Run Quast statistics", command= lambda: self.openProgram(quastClassMaker))
+		quastButton.pack()
+
+		
 		ttk.Label(self.readProperties, text="Please choose the Master assembly:", style="HP.TLabel").grid(row=int(indexAssembly / 3), columnspan=3, sticky='w')
 		indexAssembly += 3
 
@@ -196,6 +202,9 @@ class GamNgsPopUp(ParentPopUp):
 
 		self.openResult()
 
+	def openProgram(self, classMaker): #function when assembly button clicked
+		root = Toplevel(self.master)    
+		myApp = classMaker(root)        #new window for assembly
 
 
 	def openResult(self):
@@ -205,7 +214,6 @@ class GamNgsPopUp(ParentPopUp):
 
 class PossibleParamsGamNgs(PossibleParamsParent):
 	def __init__(self):
-		
 
 		tags = ["Expected size", "Thread number"]
 

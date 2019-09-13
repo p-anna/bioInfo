@@ -25,6 +25,12 @@ class ParentPopUp:
 		ttk.Label(frame, text = name, style="N.TLabel").grid(row=rowcount, columnspan=2, sticky='w')
 		rowcount += 1
 
+		#something unique in here if it is necessary
+		self.additionalFrame = ttk.Frame(frame, style="M.TFrame")
+		self.additionalFrame.grid(row=rowcount, columnspan=2)
+		rowcount += 1
+       
+
 		# read categories +  types +  library numbers in this next frame 
 		self.readProperties = ttk.Frame(frame, style="P.TFrame", padding=(10, 10, 10, 10))
 		self.readProperties.grid(row=rowcount, columnspan=2, pady=10)
@@ -65,8 +71,7 @@ class ParentPopUp:
 
 		self.showFixedParams()
 		
-		#---------
-        
+		#--------- 
 		self.buttonStart = ttk.Button(frame, text='Run ' + name + '!', command=self.runScript)
 		self.buttonStart.grid(row=rowcount, columnspan=2, sticky='s', pady=20)
 		rowcount += 1

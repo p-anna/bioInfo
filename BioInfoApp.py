@@ -33,7 +33,7 @@ class BioInfoApp():
 
 		for assemblyName in assemblyClassMaker.keys(): #for every assembly add a button to run it
 			self.addButton(assemblyName, assemblyClassMaker[assemblyName])
-
+			
 		self.gamNgsButton = ttk.Button(self.frame, text="Merging with GAM-NGS", command= lambda: self.openProgram(mergerClassMaker))
 		self.gamNgsButton.grid(row=self.rowcount, columnspan=2, padx = 20, pady = 20)
 		self.rowcount += 1
