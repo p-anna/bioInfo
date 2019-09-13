@@ -93,10 +93,7 @@ class ParentPopUp:
 		#	for p in pb:
 		#		print(p)
 
-		
-		#for pb in parameterBlocks:
-		#	subprocess.run(pb, cwd = name)		
-		
+		self.saveParameters()
 		self.statusLabel["text"] = "Finished!"
 			
             
@@ -290,11 +287,9 @@ class ParentPopUp:
 				except ValueError:
 					messagebox.showwarning("Problem with the parameters", "Tag: " + tag + " is not a number exp.: 0.9")
 
-
-            
-	def runParameterBlocks(self): #implemented in child classes
-		return [[]]
-
+	def runParameterBlocks(self): #implemented in child class
+		pass		#nothing
+	
 	def getLabelTextParam(self, tag):
 		return self.possibleParameters.paramDesc[tag][0]
 
@@ -309,3 +304,23 @@ class ParentPopUp:
 
 	def getOptionsParam(self, tag):
 		return self.possibleParameters.paramDesc[tag][4]
+
+
+	def saveParameters(self):
+		textToSave = ""
+
+		for tag in self.parameterLabels.keys():
+			tmpLabelText = self.getLabelTextParam(tag)
+			tmpValue = self.parameterValues[tag].get()
+			textToSave += tmpLabelText + "=" + str(tmpValue) + ", "
+
+		#print(textToSave)
+
+		paramFile = open(self.name + "/parameters.txt", 'w')
+
+		paramFile.write(textToSave)
+
+		paramFile.close()
+
+
+		

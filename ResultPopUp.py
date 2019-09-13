@@ -110,7 +110,7 @@ class ResultPopUp:
 
 		subprocess.run(["rm", "SPAdes.sorted_contigsTable.csv"])
 		subprocess.run(["rm", "ABySS.sorted_contigsTable.csv"])
-		subprocess.run(["rm", "velvet.sorted_contigsTable.csv"])
+		subprocess.run(["rm", "Velvet.sorted_contigsTable.csv"])
 		subprocess.run(["rm", "gam.sorted_contigsTable.csv"])
 
 
@@ -146,26 +146,40 @@ class ResultPopUp:
 
 
 		dataInfoTree.pack(fill = "both", expand = True)
-
+		dataInfoTree['show'] = 'headings' 
 		###########################################################################################
 
 		ttk.Label(frame, text="Job information:", style="N.TLabel").pack(fill = 'both', expand = True, side = 'top')
-		jobInfoTree = ttk.Treeview(frame, style="mystyle.Treeview", height = 3)
+		jobInfoTree = ttk.Treeview(frame, selectmode="extended", style="mystyle.Treeview", height = 3)
 		jobInfoTree.tag_configure('odd', background='#9cf767') # different row background color
 		jobInfoTree.tag_configure('even', background='#92b280')
 
 		jobInfoTree['columns'] = ("Tool:", "Tool Version:", "Parameters:")
 
-		for ta in jobInfoTree['columns']:
-			jobInfoTree.heading(ta, text=ta)
-			jobInfoTree.column(ta, anchor = CENTER, width = 200, stretch = True)
+		jobInfoTree.heading("Tool:", text="Tool:")
+		jobInfoTree.column("Tool:", anchor = CENTER, width = 100, stretch = True)
 
-		jobInfoTree.insert('', 'end', values = ["ABySS", "GNU Make 4.1", "k=27"], tag = ("odd", ))
-		jobInfoTree.insert('', 'end', values = ["Velet", "Version 1.2.10", "k=27"], tag = ("even", ))
-		jobInfoTree.insert('', 'end', values = ["SPAdes", "v3.11.1", "k=27"], tag = ("odd", ))
+		jobInfoTree.heading("Tool Version:", text="Tool Version:")
+		jobInfoTree.column("Tool Version:", anchor = CENTER, width = 150, stretch = True)
+
+		jobInfoTree.heading("Parameters:", text="Parameters:")
+		jobInfoTree.column("Parameters:", anchor = CENTER, width = 1000, stretch = True)
+
+
+		assembliesProperties = [("ABySS", "GNU Make 4.1"),
+								("Velvet", "Version 1.2.10"),
+								("SPAdes", "v3.11.1")]
+
+		indexOfInfoTree = 0
+		for asPro in assembliesProperties:
+			paramFile = open(asPro[0] + "/parameters.txt", 'r')
+			paramText = paramFile.read()
+			paramFile.close()
+			jobInfoTree.insert('', 'end', values = [asPro[0], asPro[1], paramText], tag = ("odd", ))
+			indexOfInfoTree += 1
 		
 		jobInfoTree.pack(fill = "both", expand = True)
-
+		jobInfoTree['show'] = 'headings' 
 
 	def format_bytes(self, size):
 		# 2**10 = 1024
