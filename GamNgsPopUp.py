@@ -54,7 +54,7 @@ class GamNgsPopUp(ParentPopUp):
 		
 		for slave in self.assemblyList:
 			# value of the radioButton is its terminalTag
-			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=slave[0], variable=self.assemblySlave, value=slave[1], command = lambda : self.nameSlave(master[0]))
+			rb = ttk.Radiobutton(self.readProperties, style="1.TRadiobutton", text=slave[0], variable=self.assemblySlave, value=slave[1], command = lambda : self.nameSlave(slave[0]))
 			rb.grid(row=int(indexAssembly / 3), column=indexAssembly % 3, sticky='w')
 			indexAssembly += 1
 
@@ -97,7 +97,7 @@ class GamNgsPopUp(ParentPopUp):
 	def runParameterBlocks(self):
 		
 		originalFaMaster = self.assemblyMaster.get()
-		originalFaSlave= self.assemblySlave.get()
+		originalFaSlave = self.assemblySlave.get()
 
 		
 		subprocess.run(["cp", originalFaMaster, self.myFolderName + self.masterName + ".fa"])

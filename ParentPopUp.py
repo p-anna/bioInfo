@@ -198,7 +198,7 @@ class ParentPopUp:
 
 		self.parameterContainers[tag] = []
 		self.parameterContainers[tag].append(ttk.Frame(self.paramFrame, style="P.TFrame"))
-		self.parameterContainers[tag][0].grid(row=self.paramFrameRowcount, column=1, sticky='e')
+		self.parameterContainers[tag][0].grid(row=self.paramFrameRowcount, column=1, sticky='w')
 
 		#parameter is a flag
 		if(typeOfParam == 1):

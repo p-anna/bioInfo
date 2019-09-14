@@ -29,7 +29,7 @@ class AbyssPopUp(ParentPopUp):
 
 			indexReadCateg += 1
 			
-		self.readCateg.set("se=")
+		self.readCateg.set("in=")
 
 	def getFileType(self): #type of input file
 		return (self.readCateg.get())
@@ -72,8 +72,6 @@ class AbyssPopUp(ParentPopUp):
 				params.append(tag + "=" +self.cwdParam(tmpValue))
 
 		subprocess.run(params, cwd = self.name)
-
-
 
 class PossibleParamsAbyss(PossibleParamsParent):
 	def __init__(self):

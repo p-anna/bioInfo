@@ -185,23 +185,7 @@ class SpadesPopUp(ParentPopUp):
 		
 		subprocess.run(params, cwd = self.name)
 
-
-
 		
-	def cwdParam(self, dic):
-		currentDir = str(sys.path[0]).split('/')
-		currentDir.append('spades')
-		destenDir = str(dic).split('/')
-		n = min(len(currentDir), len(destenDir))
-		i = 0
-		while i<n and currentDir[i] == destenDir[i] :
-			i+=1
-		return '../'*(len(currentDir)-i) + "/".join(destenDir[i:])
-			
-
-		
-
-
 	
 		
 class PossibleParamsSpades(PossibleParamsParent):
