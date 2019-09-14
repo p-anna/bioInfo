@@ -134,15 +134,17 @@ class QuastPopUp(ParentPopUp):
 				params.append(self.cwdParam(tmpValue))
 
 		params.append("--bam")
-		params.append(bamList[:-1])
+		params.append(bamList[:-1]) #without the last comma ","
 		for fL in faList:
 			params.append(fL)
 
-		for p in params:
-			print(p)
+		#for p in params:
+		#	print(p)
 			
 		subprocess.run(params, cwd = self.name)
 
+		subprocess.run(["evince", "Quast/report.pdf"])
+		
 
 
 class PossibleParamsQuast(PossibleParamsParent):
