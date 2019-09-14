@@ -2,6 +2,7 @@ from ParentPopUp import ParentPopUp
 from AddicionalParamParent import PossibleParamsParent
 from tkinter import *
 import subprocess
+import os
 
 class QuastPopUp(ParentPopUp):
 	def __init__(self, master, name, possibleParamClassInit):
@@ -94,9 +95,28 @@ class QuastPopUp(ParentPopUp):
 	
 
 	def runParameterBlocks(self):
-		params = [self.whereProgram()]
 
-	
+		bamFilesForCp = ["ABySS.sorted.bam", "Velvet.sorted.bam", "SPAdes.sorted.bam", "gam.sorted.bam"]
+		faFilesForCp = ["ABySS.fa", "Velvet.fa", "SPAdes.fa", "out.gam.fasta"]
+
+		bamList = ""
+		for fileCp in bamFilesForCp:
+			if os.path.exists("GAM-NGS/" + fileCp):
+				subprocess.run(["cp", fileCp, "../" + self.name + "/"], cwd="GAM-NGS")
+				bamList += fileCp + ","
+
+		faList = []
+		for fileCp in faFilesForCp:
+			if os.path.exists("GAM-NGS/" + fileCp):
+				subprocess.run(["cp", fileCp, "../" + self.name + "/"], cwd="GAM-NGS")
+				faList.append(fileCp)
+				
+		params = ["python", self.whereProgram(), "-o", "."]
+
+		for fileName, fileType in self.inputType.items():
+			params.append(fileType)
+			params.append(self.cwdParam(fileName))
+				
 		for tag in self.parameterLabels.keys():
 			# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7", "dir=8"]
 			tmpType = self.getTypeParam(tag)
@@ -106,11 +126,21 @@ class QuastPopUp(ParentPopUp):
 				params.append(tag)
 			#if int, intlist, float, options or text
 			elif tmpType == 2 or tmpType == 3 or tmpType == 5 or tmpType == 6 or tmpType == 7:
-				params.append(tag + "=" + tmpValue)
+				params.append(tag)
+				params.append(tmpValue)
 			#if file or directory
 			elif tmpType == 4 or tmpType == 8:
-				params.append(tag + "=" +self.cwdParam(tmpValue))
+				params.append(tag)
+				params.append(self.cwdParam(tmpValue))
 
+		params.append("--bam")
+		params.append(bamList[:-1])
+		for fL in faList:
+			params.append(fL)
+
+		for p in params:
+			print(p)
+			
 		subprocess.run(params, cwd = self.name)
 
 
@@ -118,19 +148,18 @@ class QuastPopUp(ParentPopUp):
 class PossibleParamsQuast(PossibleParamsParent):
 	def __init__(self):
 		
-		tags = ["--features", "--gene-finding", "--min-contig", "--threads", "--large",
-				"--k-mer-stats", "--k-mer-size", "--gene-finding", "--gene-threshold",
+		tags = ["--k-mer-size", "-r", "--features", "--gene-finding", "--min-contig",
+				"--threads", "--large", "--k-mer-stats", "--gene-finding", "--gene-threshold",
 				"--est-ref-size", "--use-all-alignments", "--min-alignment",
 				"--ambiguity-usage", "--ambiguity-score", "--fragmented",
-				"--fragmented-max-indent", "--upper-bound-assembly",
-				"--est-insert-size", "--memory-efficient", "--space-efficient",
-				"--no-check", "--no-html", "--no-sv", "--no-gzip", "--no-read-stats",
-				"--no-snps", "--no-gc", "-r"]
+				"--upper-bound-assembly", "--est-insert-size", "--memory-efficient",
+				"--space-efficient", "--no-check", "--no-html", "--no-sv", "--no-gzip",
+				"--no-snps", "--no-gc"]
 		#       "--eukaryote", "--fungus", "--circos", "--mgm", "--glimmer", "--rna-finding",
 		#       "--conserved-genes-finding", "--scaffold-gap-max-size", "--upper-bound-min-con"
 		#       "--plots-format", "--no-icarus", "--no-plots", "--split-scaffolds", "--operons"
 		#       "--min-identity", "--strict-NA", "--extensive-mis-size", "--unaligned-part-size",
-		#		"--skip-unaligned-mis-contigs"
+		#		"--skip-unaligned-mis-contigs", "--fragmented-max-indent", "--no-read-stats"
 
 		#("label text", "param description", type, isOptionalParam)
 		# type: ["flag=1", "int=2", "intlist=3", "file=4", "float=5", "options=6", "text=7", "dir=8"]
@@ -170,10 +199,10 @@ class PossibleParamsQuast(PossibleParamsParent):
 		#self.paramDesc["--unaligned-part-size"] = ("Unaligned part size", "Lower threshold for detecting partially unaligned contigs. [500 bp]", 2, True)
 		#self.paramDesc["--skip-unaligned-mis-contigs"] = ("Do not distinguish contigs*", "Do not distinguish contigs with more than 50% unaligned bases as a separate group of contigs. [QUAST does not count misassemblies in them]", 1, True)
 		self.paramDesc["--fragmented"] = ("Reference genome is fragmented", "Reference genome is fragmented. QUAST will try to detect misassemblies caused by the fragmentation and mark them fake (will be excluded from # misassemblies)..", 1, True)
-		self.paramDesc["--fragmented-max-indent"] = ("Fake translocation if alignments are further", "Mark translocation as fake if both alignments are located no further than N bases from the ends of the reference fragments. Less than extensive misassembly size, requires --fragmented option. [50]", 2, True)
-		self.paramDesc["--upper-bound-assembly"] = ("Simulate upper bound assembly", "Simulate upper bound assembly based on the reference genome and a given set reads (mate-pairs or long reads). This assembly is added to the comparison. If you are not interested in additional analysis and want to get only the upper bound assembly, add --no-sv and --no-read-stats.", 1, True)
+		#self.paramDesc["--fragmented-max-indent"] = ("Fake translocation if alignments are further", "Mark translocation as fake if both alignments are located no further than N bases from the ends of the reference fragments. Less than extensive misassembly size, requires --fragmented option. [50]", 2, True)
+		self.paramDesc["--upper-bound-assembly"] = ("Simulate upper bound assembly", "Simulate upper bound assembly based on the reference genome and a given set reads (mate-pairs or long reads). This assembly is added to the comparison.", 1, True)
 		#self.paramDesc["--upper-bound-min-con"] = ("Upper bound for connecting", "Minimal number of 'connecting reads' needed for joining upper bound contigs into a scaffold. [2 for mate-pairs and 1 for long reads] (PacBio or Nanopore libraries).", 2, True)
-		self.paramDesc["--est-insert-size"] = ("Paired-reads insert size", "Paired-reads insert size used in the upper bound assembly construction, used for detecting minimal repeat size that spans the upper bound assembly into contigs. [median insert size of provided paired-end reads, if no paired-end reads are provided 255].", 2, True)
+		self.paramDesc["--est-insert-size"] = ("Paired-reads insert size", "Paired-reads insert size used in the upper bound assembly construction, for detecting minimal repeat size that spans assembly into contigs. [median insert size of paired-end reads or 255].", 2, True)
 		#self.paramDesc["--plots-format"] = ("File format for plots", "File format for plots. Supported formats: emf, eps, pdf, png, ps, raw, rgba, svg, svgz. [PDF].", 7, True)
 		self.paramDesc["--memory-efficient"] = ("One thread per assembly", "Use one thread, separately per each assembly and each chromosome. This may significantly reduce memory consumption for large genomes.", 1, True)
 		self.paramDesc["--space-efficient"] = ("Only primary output", "Create only primary output items (reports, plots, quast.log, etc). All auxiliary files will not be created.", 1, True)
@@ -185,6 +214,6 @@ class PossibleParamsQuast(PossibleParamsParent):
 		self.paramDesc["--no-gc"] = ("No GC computation", "Do not compute GC% and do not produce GC-distribution plots (both in HTML report and in PDF).", 1, True)
 		self.paramDesc["--no-sv"] = ("No structural variant", "Do  not run structural variant calling and processing (make sense only if reads are specified).", 1, True)
 		self.paramDesc["--no-gzip"] = ("No gzip", "Do not compress large output files (files containing SNP information and predicted genes). This may speed up computation, but more disk space is required.", 1, True)
-		self.paramDesc["--no-read-stats"] = ("No read stats", "Do not align reads against assemblies and do not report the corresponding metrics.", 1, True)
+		#self.paramDesc["--no-read-stats"] = ("No read stats", "Do not align reads against assemblies and do not report the corresponding metrics.", 1, True)
 
 		super().__init__(tags)
