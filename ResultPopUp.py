@@ -17,14 +17,14 @@ class ResultPopUp:
         # java GetFastaStats -o -min 200 -genomeSize <Genome Expected Size> <Contig Fasta/Scaffold Fasta>
         # Columns of table from GAGE statistics
 
-		commonPath = "../../Documents/MasterRad/python/program/GAM-NGS/"
+		commonPath = "../../Documents/MasterRad/python/bioInfo/GAM-NGS/"
 
 		try:
 			genSize = int(expectedGenomeSize)
 			gageProc = subprocess.run(["java", "GetFastaStats", "-o", "-min", "200", "-genomeSize", expectedGenomeSize, commonPath + masterName + ".fa"],
 									  stdout = subprocess.PIPE, cwd = gageStatisticPath)
 		except ValueError:
-			gageProc = subprocess.run(["java", "GetFastaStats", "-o", "-min", "200", commonPath + masterName+ ".fa"], stdout = subprocess.PIPE, cwd = gageStatisticPath)
+			gageProc = subprocess.run(["java", "GetFastaStats", "-o", "-min", "200", commonPath + masterName + ".fa"], stdout = subprocess.PIPE, cwd = gageStatisticPath)
 
 		masterResult = (re.sub(r'\\n', ' ', str(gageProc.stdout))).replace('b\'', '', 1) # '\n' replace with ' ', "b'" remove from the beggining if there is one
 
