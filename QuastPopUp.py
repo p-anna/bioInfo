@@ -95,6 +95,30 @@ class QuastPopUp(ParentPopUp):
 	
 
 	def runParameterBlocks(self):
+		
+
+		if(not(os.path.isdir('./GAM-NGS'))): # merging didn't occured yet making the "bam" files
+			subprocess.run(["mkdir", "GAM-NGS"])
+			assemblyFileName = ["ABySS", "Velvet", "SPAdes"]
+			faFile = ["../ABySS/abyss-contigs.fa", "../Velvet/contigs.fa", "../SPAdes/contigs.fasta"]
+			readsFile = []
+			for fileName, fileType in self.inputType.items():
+				readsFile.append(self.cwdParam(fileName))
+
+			for i in range(3):
+				subprocess.run(["cp", faFile[i], assemblyFileName[i] + ".fa"], cwd = "GAM-NGS")
+				subprocess.run(["bwa", "index", faFile[i]], cwd = "GAM-NGS")
+				subprocess.run(["bwa", "aln", "-o", "0", "-t", "4", faFile[i], readsFile[0]], stdout=open(self.name + "/asembler1.sai", "w"), cwd = "GAM-NGS")
+				subprocess.run(["bwa", "aln", "-o", "0", "-t", "4", faFile[i], readsFile[1]], stdout=open(self.name + "/asembler2.sai", "w"), cwd = "GAM-NGS")
+				sampeOut = subprocess.Popen(["bwa", "sampe", faFile[i], "asembler1.sai", "asembler2.sai", readsFile[0], readsFile[1]], stdout = subprocess.PIPE, cwd = "GAM-NGS")
+				viewOut = subprocess.Popen(["samtools", "view", "-Shu", "-"], stdin=sampeOut.stdout, stdout = subprocess.PIPE, cwd = "GAM-NGS")
+				sampeOut.stdout.close()
+				subprocess.run(["samtools", "sort", "-", assemblyFileName[i] + ".sorted"], stdin=viewOut.stdout, cwd = "GAM-NGS")
+				viewOut.stdout.close()
+
+				subprocess.run(["samtools", "index", assemblyFileName[i] + ".sorted.bam"], cwd = "GAM-NGS")
+			print("IF NO GAM")
+			
 
 		bamFilesForCp = ["ABySS.sorted.bam", "Velvet.sorted.bam", "SPAdes.sorted.bam", "gam.sorted.bam"]
 		faFilesForCp = ["ABySS.fa", "Velvet.fa", "SPAdes.fa", "out.gam.fasta"]
@@ -138,8 +162,8 @@ class QuastPopUp(ParentPopUp):
 		for fL in faList:
 			params.append(fL)
 
-		#for p in params:
-		#	print(p)
+		for p in params:
+			print(p)
 			
 		subprocess.run(params, cwd = self.name)
 
